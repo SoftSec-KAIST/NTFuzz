@@ -1,0 +1,2110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>B2R2.Core</name></assembly>
+<members>
+<member name="T:B2R2.RegType">
+<summary>
+ Types that a register can have. This essentially means how many bits are in
+ the register.
+</summary>
+</member>
+<member name="T:B2R2.rt">
+<summary>
+ A unit for RegType.
+</summary>
+</member>
+<member name="T:B2R2.RegisterID">
+<summary>
+ RegisterID is a platform-independent representation of a register.
+</summary>
+</member>
+<member name="P:B2R2.RegisterSet.Tag">
+<summary>
+ Tag identifies ISA.
+</summary>
+</member>
+<member name="P:B2R2.RegisterSet.S">
+<summary>
+ A backup storage for unknown variables, which does not have an unknown
+ RegisterID. For example, when writing a symbolic executor, we may
+ encounter unknown variables, i.e., fresh symbolic variables. We store them
+ in this set.
+</summary>
+</member>
+<member name="P:B2R2.RegisterSet.EmptyArr">
+<summary>
+ An empty array representing an empty set of registers. This array should
+ be initialized based on the ArrSize.
+</summary>
+</member>
+<member name="P:B2R2.RegisterSet.Empty">
+<summary>
+ Return an empty RegisterSet.
+</summary>
+</member>
+<member name="P:B2R2.RegisterSet.BitArray">
+<summary>
+ An internal array storing the register set.
+</summary>
+</member>
+<member name="P:B2R2.RegisterSet.ArrSize">
+<summary>
+ Size of the internal array.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.Union(B2R2.RegisterSet)">
+<summary>
+ Union of two register sets.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.Remove(System.Int32)">
+<summary>
+ Remove a register from the set.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.Project(System.Int32)">
+<summary>
+ Obtain an integer from a given RegisterID.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.New(System.UInt64[],Microsoft.FSharp.Collections.FSharpSet{System.Int32})">
+<summary>
+ Create a new RegisterSet. This method should be overridden by ISA-specific
+ RegisterSet implementation.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.IsEmpty">
+<summary>
+ Check if the set is empty.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.Intersect(B2R2.RegisterSet)">
+<summary>
+ Intersection of two register sets.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.Exists(System.Int32)">
+<summary>
+ Check if a register exists in the set.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSet.Add(System.Int32)">
+<summary>
+ Add a register to the set.
+</summary>
+</member>
+<member name="T:B2R2.RegisterSet">
+<summary>
+ RegisterSet is an efficient set data structure for managing a set of
+ registers.
+</summary>
+</member>
+<member name="T:B2R2.RegisterSetTag">
+<summary>
+ A tag used in RegisterSet for identifying distinct set of registers for
+ different ISAs.
+</summary>
+</member>
+<member name="T:B2R2.WordSize">
+<summary>
+ B2R2 represents the word size of a CPU with WordSize, which can be either
+ 32- or 64-bit.
+</summary>
+</member>
+<member name="F:B2R2.Endian.Big">
+<summary>
+ Big endian
+</summary>
+</member>
+<member name="F:B2R2.Endian.Little">
+<summary>
+ Little endian
+</summary>
+</member>
+<member name="T:B2R2.Endian">
+<summary>
+ Endianness.
+</summary>
+</member>
+<member name="F:B2R2.OS.MacOSX">
+<summary>
+ MacOSX.
+</summary>
+</member>
+<member name="F:B2R2.OS.Linux">
+<summary>
+ Linux.
+</summary>
+</member>
+<member name="F:B2R2.OS.Windows">
+<summary>
+ windows.
+</summary>
+</member>
+<member name="T:B2R2.OS">
+<summary>
+ Specify OS type.
+</summary>
+</member>
+<member name="T:B2R2.ISA">
+<summary>
+ Instruction Set Architecture (ISA).
+</summary>
+</member>
+<member name="F:B2R2.ArchOperationMode.NoMode">
+<summary>
+ No mode. This is used for architectures that do not have any operation
+ mode.
+</summary>
+</member>
+<member name="F:B2R2.ArchOperationMode.ThumbMode">
+<summary>
+ Thumb mode.
+</summary>
+</member>
+<member name="F:B2R2.ArchOperationMode.ARMMode">
+<summary>
+ ARM mode.
+</summary>
+</member>
+<member name="T:B2R2.ArchOperationMode">
+<summary>
+ Some ISA, such as ARM, have their own operation mode, which can vary at
+ runtime. For example, ARM architecture can switch between Thumb and ARM
+ mode. ArchOperationMode decides which mode to consider at the time of
+ parsing/lifting machine instructions.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.UnknownISA">
+<summary>
+ Unknown ISA.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.TMS320C6000">
+<summary>
+ TMS320C64x, TMS320C67x, etc.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.TMS320C5000">
+<summary>
+ TMS320C54x, TMS320C55x, etc.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.EVM">
+<summary>
+ Ethereum Vritual Machine.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS64R6">
+<summary>
+ MIPS64R6 (64-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS64R2">
+<summary>
+ MIPS64R2 (64-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS64">
+<summary>
+ MIPS64 (64-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS32R6">
+<summary>
+ MIPS32 Release6 (32-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS32R2">
+<summary>
+ MIPS32 Release2 (32-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS32">
+<summary>
+ MIPS32 (32-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS5">
+<summary>
+ MIPS5 (64-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS4">
+<summary>
+ MIPS4 (64-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS3">
+<summary>
+ MIPS3 (64-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS2">
+<summary>
+ MIPS2 (32-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.MIPS1">
+<summary>
+ MIPS1 (32-bit mode).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.AARCH64">
+<summary>
+ ARMv8 64-bit mode.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.AARCH32">
+<summary>
+ ARMv8 32-bit mode.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.ARMv7">
+<summary>
+ ARMv7.
+</summary>
+</member>
+<member name="F:B2R2.Architecture.IntelX64">
+<summary>
+ x86-64 (amd64).
+</summary>
+</member>
+<member name="F:B2R2.Architecture.IntelX86">
+<summary>
+ x86 (i386).
+</summary>
+</member>
+<member name="T:B2R2.Architecture">
+<summary>
+ Architecture types.
+</summary>
+</member>
+<member name="F:B2R2.FileFormat.MachBinary">
+<summary>
+ Mach-O binary.
+</summary>
+</member>
+<member name="F:B2R2.FileFormat.PEBinary">
+<summary>
+ PE binary.
+</summary>
+</member>
+<member name="F:B2R2.FileFormat.ELFBinary">
+<summary>
+ ELF binary.
+</summary>
+</member>
+<member name="F:B2R2.FileFormat.RawBinary">
+<summary>
+ Raw binary without any specific file format: a sequence of bytes.
+</summary>
+</member>
+<member name="T:B2R2.FileFormat">
+<summary>
+ Types of binary file format.
+</summary>
+</member>
+<member name="F:B2R2.AddrRange.Max">
+<summary>
+ Maximum value (upper bound) of the interval.
+</summary>
+</member>
+<member name="F:B2R2.AddrRange.Min">
+<summary>
+ Minimum value (lower bound) of the interval.
+</summary>
+</member>
+<member name="M:B2R2.AddrRange.ToTuple">
+ <summary>
+ Get the corresponding tuple (Addr, Addr) from the AddrRange.
+ </summary>
+ <returns>
+ A tuple of min (inclusive) and max (exclusive).
+ </returns>
+</member>
+<member name="M:B2R2.AddrRange.GetMin(B2R2.AddrRange)">
+ <summary>
+ Get the min value (inclusive) of the AddrRange.
+ </summary>
+ <returns>
+ The min value.
+ </returns>
+</member>
+<member name="M:B2R2.AddrRange.GetMax(B2R2.AddrRange)">
+ <summary>
+ Get the max value (exclusive) of the AddrRange.
+ </summary>
+ <returns>
+ The max value.
+ </returns>
+</member>
+<member name="M:B2R2.AddrRange.#ctor(System.UInt64,System.UInt64)">
+ <summary>
+ Initialize an instance of AddrRange from a given interval.
+ </summary>
+ <param name="min">The start address.</param>
+ <param name="max">The end address + 1.</param>
+ <returns>
+ An instance of AddrRange.
+ </returns>
+</member>
+<member name="T:B2R2.AddrRange">
+<summary>
+ AddrRange is a tuple (min, max) that represents a range of address values
+ that are greater or equal to the min value (inclusive) and are less than the
+ max value (exclusive). To access the min and the max value of a range, use
+ either getMin or getMax function.
+</summary>
+</member>
+<member name="T:B2R2.Addr">
+<summary>
+ Addresses are represented with a 64-bit integer in B2R2.
+</summary>
+</member>
+<member name="T:B2R2.ARMap`1">
+<summary>
+ This is a non-overlapping interval map that we call &quot;Address Range Map&quot;
+ (ARMap). This map internally forms a red-black tree, which follows the
+ implementation of the paper written by Kimball Germane and Matthew Might:
+ &quot;Deletion: The Curse of the Red-Black Tree&quot;, Journal of Functional
+ Programming, vol. 24, no. 4, 2014.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Zext(B2R2.BitVector,System.Int32)">
+<summary>
+ BitVector sign-extend.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Zero(System.Int32)">
+<summary>
+ BitVector zero (= 0) of the bit length.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.ValToString(B2R2.BitVector)">
+<summary>
+ A value of a BitVector to string.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.UnsignedMin(System.Int32)">
+<summary>
+ BitVector of unsigned minimum integer for given RegType.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.UnsignedMax(System.Int32)">
+<summary>
+ BitVector of unsigned maximum integer for given RegType.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.ToUInt64(B2R2.BitVector)">
+<summary>
+ Get a uint64 value from a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.ToUInt32(B2R2.BitVector)">
+<summary>
+ Get a uint32 value from a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.ToString(B2R2.BitVector)">
+<summary>
+ BitVector to string.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.ToInt64(B2R2.BitVector)">
+<summary>
+ Get a int64 value from a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.ToInt32(B2R2.BitVector)">
+<summary>
+ Get a int32 value from a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Sub(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector subtraction.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.SModulo(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed modulo.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Smin(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Signed Minimum Value.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Smax(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Signed Maximum Value.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.SLT(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed less than.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.SLE(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed less than or equal.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.SignedMin(System.Int32)">
+<summary>
+ BitVector of signed minimum integer for given RegType.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.SignedMax(System.Int32)">
+<summary>
+ BitVector of signed maximum integer for given RegType.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Shr(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector logical shift-right.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Shl(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector logical shift-left.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.SGT(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed grater than.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.SGE(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed greater than or equal.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Sext(B2R2.BitVector,System.Int32)">
+<summary>
+ BitVector sign-extend.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Sdiv(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed division.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Sar(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector arithmetic shift-right.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_UnaryNegation(B2R2.BitVector)">
+<summary>
+ BitVector unary negation.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Subtraction(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector subtraction.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Subtraction(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector subtraction with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Multiply(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector multiplication.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Multiply(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector multiplication with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Modulus(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed modulo.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Modulus(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector unsigned modulo with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_LogicalNot(B2R2.BitVector)">
+<summary>
+ BitVector Bitwise Not.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_ExclusiveOr(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Bitwise Xor.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_ExclusiveOr(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector Bitwise And with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Division(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector signed division.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Division(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector unsigned division with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_BitwiseOr(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Bitwise Or.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_BitwiseOr(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector Bitwise Or with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_BitwiseAnd(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Bitwise And.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_BitwiseAnd(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector Bitwise And with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_BarPercentBar(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned modulo.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_BarDivideBar(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned division.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Addition(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector addition.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.op_Addition(B2R2.BitVector,System.UInt64)">
+<summary>
+ BitVector addition with uint64.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.One(System.Int32)">
+<summary>
+ BitVector one (= 1) of the bit length.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.OfUInt64(System.UInt64,System.Int32)">
+<summary>
+ Get a BitVector from an unsigned integer.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.OfUInt32(System.UInt32,System.Int32)">
+<summary>
+ Get a BitVector from an unsigned integer.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.OfUBInt(System.Numerics.BigInteger,System.Int32)">
+<summary>
+ Get a BitVector from an unsigned bigint.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.OfInt64(System.Int64,System.Int32)">
+<summary>
+ Get a BitVector from a 64-bit integer.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.OfInt32(System.Int32,System.Int32)">
+ <summary>
+   Create a BitVector from an integer.
+ </summary>
+</member>
+<member name="M:B2R2.BitVector.OfBv(B2R2.BitVector,System.Int32)">
+<summary>
+ Get a BitVector of a specified size from another BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.OfArr(System.Byte[])">
+<summary>
+ Get a BitVector from a byte array (in little endian).
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Neg(B2R2.BitVector)">
+<summary>
+ Make it negative.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Mul(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector multiplication.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Modulo(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned modulo.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Min(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Minimum Value.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Max(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Maximum Value.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.LT(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned less than.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.LE(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned less than or equal.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsZero(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent a value zero (0)?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsUnsignedMax(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent a unsigned max value?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsTrue(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent true (&lt;&gt;0)?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsSignedMin(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent a signed min value?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsSignedMax(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent a signed max value?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsPositive(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent a positive number?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsOne(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent a value one (1)?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsNum(B2R2.BitVector,System.UInt64)">
+<summary>
+ Does the bitvector represent the specified integer number?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsNegative(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent a negative number?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.IsFalse(B2R2.BitVector)">
+<summary>
+ Does the bitvector represent false (=0)?
+</summary>
+</member>
+<member name="M:B2R2.BitVector.GT(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned greater than.
+</summary>
+</member>
+<member name="P:B2R2.BitVector.maxNum8">
+<summary>
+ BitVector of maximum 8-bit integer.
+</summary>
+</member>
+<member name="P:B2R2.BitVector.maxNum64">
+<summary>
+ BitVector of maximum 64-bit integer.
+</summary>
+</member>
+<member name="P:B2R2.BitVector.maxNum32">
+<summary>
+ BitVector of maximum 32-bit integer.
+</summary>
+</member>
+<member name="P:B2R2.BitVector.maxNum16">
+<summary>
+ BitVector of maximum 16-bit integer.
+</summary>
+</member>
+<member name="P:B2R2.BitVector.T">
+<summary>
+ BitVector one (= 1) of the bit length.
+</summary>
+</member>
+<member name="P:B2R2.BitVector.F">
+<summary>
+ BitVector one (= 1) of the bit length.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.GetValue(B2R2.BitVector)">
+<summary>
+ Get a numeric value from a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.GetType(B2R2.BitVector)">
+<summary>
+ Get a type of a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.GE(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned greater than or equal.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Extract(B2R2.BitVector,System.Int32,System.Int32)">
+<summary>
+ Extract a type of a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.EQ(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector equal.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Div(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector unsigned division.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Concat(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector concat.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Cast(B2R2.BitVector,System.Int32)">
+<summary>
+ Cast a type of a BitVector.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.BitwiseXor(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Bitwise Xor.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.BitwiseOr(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Bitwise Or.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.BitwiseNot(B2R2.BitVector)">
+<summary>
+ BitVector Bitwise Not.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.BitwiseAnd(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector Bitwise And.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Add(B2R2.BitVector,B2R2.BitVector)">
+<summary>
+ BitVector addition.
+</summary>
+</member>
+<member name="M:B2R2.BitVector.Abs(B2R2.BitVector)">
+<summary>
+ BitVector Absolute Value.
+</summary>
+</member>
+<member name="T:B2R2.BitVector">
+<summary>
+ BitVector is the fundamental data type for binary code. We use bigint
+ (arbitrary precision integer) for numbers because registers can have a very
+ large number, e.g., YMM0 in x86.
+</summary>
+</member>
+<member name="F:B2R2.ProgramPoint.Position@">
+<summary>
+ Index of the IR statement within the instruction.
+</summary>
+</member>
+<member name="F:B2R2.ProgramPoint.Address@">
+<summary>
+ Address of the instruction.
+</summary>
+</member>
+<member name="P:B2R2.ProgramPoint.Position">
+<summary>
+ Index of the IR statement within the instruction.
+</summary>
+</member>
+<member name="P:B2R2.ProgramPoint.Address">
+<summary>
+ Address of the instruction.
+</summary>
+</member>
+<member name="M:B2R2.ProgramPoint.GetFake">
+<summary>
+ Get a fake program point to represent a fake vertex, which does not exist
+ in a CFG. Fake vertices are useful for representing external function
+ calls and their nodes in the SCFG.
+</summary>
+</member>
+<member name="T:B2R2.ProgramPoint">
+<summary>
+ A program point (ProgramPoint) is a fine-grained location in a program,
+ which can point to a specific IR statement. We represent it as a tuple:
+ (Address of the instruction, Index of the IR stmt for the instruction).
+</summary>
+</member>
+<member name="T:B2R2.IntervalMap`1">
+<summary>
+ Interval-tree-based map, which maps an interval of type (AddrRange) to an
+ IntervalMapElement (&apos;a).
+</summary>
+</member>
+<member name="T:B2R2.IntervalMapElem`1">
+<summary>
+ An element for our interval map.
+</summary>
+</member>
+<member name="T:B2R2.IntervalSet">
+<summary>
+ Interval tree-based set, which stores intervals (AddrRange) that can
+ overlap unlike ARMap.
+</summary>
+</member>
+<member name="T:B2R2.IntervalSetElem">
+<summary>
+ An element for our interval set.
+</summary>
+</member>
+<member name="T:B2R2.RandomAccessQueue`1">
+<summary>
+ Interval tree-based map: an interval of type (Addr) -&gt; an
+ RandomAccessQueueElement (&apos;a).
+</summary>
+</member>
+<member name="T:B2R2.RandomAccessQueueElem`1">
+<summary>
+ An element for our random access queue.
+</summary>
+</member>
+<member name="T:B2R2.BinReaderBE">
+<summary>
+ This is a BinReader that reads values in a big-endian manner.
+</summary>
+</member>
+<member name="T:B2R2.BinReaderLE">
+<summary>
+ This is a BinReader that reads values in a little-endian manner.
+</summary>
+</member>
+<member name="P:B2R2.BinReader.Bytes(System.Byte[])">
+<summary>
+ The byte array stored for this reader.
+</summary>
+</member>
+<member name="P:B2R2.BinReader.Endianness">
+<summary>
+ My endianness.
+</summary>
+</member>
+<member name="P:B2R2.BinReader.Bytes">
+<summary>
+ The byte array stored for this reader.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.RenewReader(B2R2.BinReader,B2R2.Endian)">
+<summary>
+ Return a new BinReader of the given endianness. This function will return
+ the same reader if the given endianness is the same as the endianness of
+ the original reader.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadUInt8(System.Int32)">
+<summary>
+ Read a uint8 value at the given offset. This function, unlike PeekUInt8,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadUInt64LEB128(System.Int32)">
+<summary>
+ Read a LEB128-encoded integer into uint64 at the given offset.
+ This function, unlike PeekUInt64LEB128, will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadUInt64(System.Int32)">
+<summary>
+ Read a uint64 value at the given offset. This function, unlike PeekUInt64,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadUInt32LEB128(System.Int32)">
+<summary>
+ Read a LEB128-encoded integer into uint32 at the given offset.
+ This function, unlike PeekUInt32LEB128, will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadUInt32(System.Int32)">
+<summary>
+ Read a uint32 value at the given offset. This function, unlike PeekUInt32,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadUInt16(System.Int32)">
+<summary>
+ Read a uint16 value at the given offset. This function, unlike PeekUInt16,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadInt8(System.Int32)">
+<summary>
+ Read an int8 value at the given offset. This function, unlike PeekInt8,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadInt64LEB128(System.Int32)">
+<summary>
+ Read a LEB128-encoded integer into int64 at the given offset.
+ This function, unlike PeekInt64LEB128, will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadInt64(System.Int32)">
+<summary>
+ Read an int64 value at the given offset. This function, unlike PeekInt64,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadInt32LEB128(System.Int32)">
+<summary>
+ Read a LEB128-encoded integer into int32 at the given offset.
+ This function, unlike PeekInt32LEB128, will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadInt32(System.Int32)">
+<summary>
+ Read an int32 value at the given offset. This function, unlike PeekInt32,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadInt16(System.Int32)">
+<summary>
+ Read an int16 value at the given offset. This function, unlike PeekInt16,
+ will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadChars(System.Int32,System.Int32)">
+<summary>
+ Read a character array of size n at the given offset. This function,
+ unlike PeekChars, will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadBytes(System.Int32,System.Int32)">
+<summary>
+ Read a byte array of size n at the given offset. This function, unlike
+ PeekBytes, will return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.ReadByte(System.Int32)">
+<summary>
+ Read a byte at the given offset. This function, unlike PeekByte, will
+ return the next offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekUInt8(System.Int32)">
+<summary>
+ Peek a single byte as a uint8 type at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekUInt64LEB128(System.Int32)">
+<summary>
+ Peek a LEB128-encoded integer at the given offset.
+ This function returns a tuple of
+ (the decoded uint64, and the count of how many bytes were peeked).
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekUInt64(System.Int32)">
+<summary>
+ Peek a uint64 value at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekUInt32LEB128(System.Int32)">
+<summary>
+ Peek a LEB128-encoded integer at the given offset.
+ This function returns a tuple of
+ (the decoded uint32, and the count of how many bytes were peeked).
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekUInt32(System.Int32)">
+<summary>
+ Peek a uint32 value at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekUInt16(System.Int32)">
+<summary>
+ Peek a uint16 value at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekInt8(System.Int32)">
+<summary>
+ Peek a single byte as an int8 type at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekInt64LEB128(System.Int32)">
+<summary>
+ Peek a LEB128-encoded integer at the given offset.
+ This function returns a tuple of
+ (the decoded int64, and the count of how many bytes were peeked).
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekInt64(System.Int32)">
+<summary>
+ Peek an int64 value at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekInt32LEB128(System.Int32)">
+<summary>
+ Peek a LEB128-encoded integer at the given offset.
+ This function returns a tuple of
+ (the decoded int32, and the count of how many bytes were peeked).
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekInt32(System.Int32)">
+<summary>
+ Peek an int32 value at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekInt16(System.Int32)">
+<summary>
+ Peek an int16 value at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekChars(System.Int32,System.Int32)">
+<summary>
+ Peek a character array of size n at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekBytes(System.UInt64,System.UInt64)">
+<summary>
+ Peek byte array of size n at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekBytes(System.Int32,System.Int32)">
+<summary>
+ Peek byte array of size n at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.PeekByte(System.Int32)">
+<summary>
+ Peek a single byte at the given offset.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.Length">
+<summary>
+ Length of the file for this reader.
+</summary>
+</member>
+<member name="M:B2R2.BinReader.IsOutOfRange(System.Int32)">
+<summary>
+ Is the given offset points to a position out of the range of the file?
+</summary>
+</member>
+<member name="M:B2R2.BinReader.Init(System.Byte[],B2R2.Endian)">
+<summary>
+ Instantiate BinReader from a given byte array and endianness.
+</summary>
+</member>
+<member name="T:B2R2.BinReader">
+<summary>
+ BinReader abstracts away the process of reading byte sequences. This is the
+ base class for BinReader, which has two kinds of implementations:
+ little-endian and big-endian BinReader.
+</summary>
+</member>
+<member name="T:B2R2.ConcurrentLRU`2">
+<summary>
+ Least Recently Used Cache supporting concurrency.
+</summary>
+</member>
+<member name="T:B2R2.ConcurrentWeakReferenceTable`1">
+ <summary>
+   Weak-reference table that supports concurrency.
+ </summary>
+</member>
+<member name="T:B2R2.InvalidRegTypeException">
+<summary>
+ This exception is raised when an invalid RegType is encountered.
+</summary>
+</member>
+<member name="T:B2R2.TagMismatchException">
+<summary>
+ Raised when two RegisterSets with two distinct tags operate.
+</summary>
+</member>
+<member name="T:B2R2.InvalidWordSizeException">
+<summary>
+ This exception is raised when an invalid WordSize is encountered.
+</summary>
+</member>
+<member name="T:B2R2.InvalidEndianException">
+<summary>
+ Raised when an invalid Endian value is used.
+</summary>
+</member>
+<member name="T:B2R2.UnknownOSException">
+<summary>
+ Raised when unknown OS type is detected.
+</summary>
+</member>
+<member name="T:B2R2.InvalidTargetArchModeException">
+<summary>
+ Raised when an invalid ArchOperationMode is given.
+</summary>
+</member>
+<member name="T:B2R2.InvalidISAException">
+<summary>
+ Raised when an invalid ISA is given as a parameter.
+</summary>
+</member>
+<member name="T:B2R2.InvalidAddrRangeException">
+<summary>
+ Raised when an AddrRange has the same Min and Max value, i.e., for invalid
+ interval.
+</summary>
+</member>
+<member name="T:B2R2.RangeOverlapException">
+<summary>
+ Raised when there is an overlapping intervals from the interval tree.
+</summary>
+</member>
+<member name="M:B2R2.Option.getWithExn``1(Microsoft.FSharp.Core.FSharpOption{``0},System.Exception)">
+<summary>
+ Unwrap an option type. If the value is None, throw the exception (exn).
+</summary>
+</member>
+<member name="T:B2R2.Option">
+<summary>
+ Extended Option.
+</summary>
+</member>
+<member name="M:B2R2.Int64.pow(System.Int64,System.Int64)">
+<summary>
+ Get a power from a 64-bit integer.
+</summary>
+</member>
+<member name="T:B2R2.Int64">
+<summary>
+ Extended Int64.
+</summary>
+</member>
+<member name="M:B2R2.BigInteger.getMask(System.Int32)">
+<summary>
+ Get a bitmask of size n.
+</summary>
+</member>
+<member name="P:B2R2.BigInteger.mask512">
+<summary>
+ Bitmask of size 512 bits.
+</summary>
+</member>
+<member name="P:B2R2.BigInteger.mask256">
+<summary>
+ Bitmask of size 256 bits.
+</summary>
+</member>
+<member name="P:B2R2.BigInteger.mask128">
+<summary>
+ Bitmask of size 128 bits.
+</summary>
+</member>
+<member name="T:B2R2.BigInteger">
+<summary>
+ Extended BigInteger.
+</summary>
+</member>
+<member name="M:B2R2.String.fromBytes(System.Byte[])">
+<summary>
+ Convert a byte array to a string.
+</summary>
+</member>
+<member name="M:B2R2.String.toBytes(System.String)">
+<summary>
+ Convert a string to a byte array.
+</summary>
+</member>
+<member name="T:B2R2.String">
+<summary>
+ Extended String.
+</summary>
+</member>
+<member name="T:B2R2.Array">
+<summary>
+ Extended Array.
+</summary>
+</member>
+<member name="T:B2R2.Monads.OrElse.OrElseBuilder">
+<summary>
+ A builder for OrElse computation expression.
+</summary>
+</member>
+<member name="T:B2R2.Monads.OrElse">
+<summary>
+ OrElse represents computation expressions that capture the result until
+ successful.
+</summary>
+</member>
+<member name="T:B2R2.Monads.Maybe.MaybeBuilder">
+<summary>
+ A builder for Maybe computation expression.
+</summary>
+</member>
+<member name="T:B2R2.Monads.Maybe">
+<summary>
+ Maybe represents computation expressions that might go wrong.
+</summary>
+</member>
+<member name="M:B2R2.RegTypeModule.getUInt64Mask(System.Int32)">
+ <summary>
+   Get a bitmask (in integer) from the given RegType.
+ </summary>
+ <returns>
+   A bit mask in uint64.
+ </returns>
+</member>
+<member name="M:B2R2.RegTypeModule.getMask(System.Int32)">
+<summary>
+ Get a bitmask of the given RegType size.
+ &lt;summary&gt;
+   Get a bitmask (in integer) from the given RegType.
+ &lt;/summary&gt;
+ &lt;returns&gt;
+   A bit mask in big integer.
+ &lt;/returns&gt;
+</summary>
+</member>
+<member name="M:B2R2.RegTypeModule.double(System.Int32)">
+<summary>
+ Get the double width of RegType.
+ &lt;summary&gt;
+   Get a double-sized RegType from a given RegType.
+ &lt;/summary&gt;
+ &lt;param name=&quot;t&quot;&gt;RegType.&lt;/param&gt;
+ &lt;returns&gt;
+   A &lt;see cref=&quot;T:B2R2.RegType&quot;/&gt;.
+ &lt;/returns&gt;
+</summary>
+</member>
+<member name="M:B2R2.RegTypeModule.fromByteWidth``1(System.Int32)">
+ <summary>
+   Get the corresponding integer RegType from the given byte width.
+ </summary>
+ <param name="n">Byte width in integer.</param>
+ <returns>
+   A <see cref="T:B2R2.RegType"/>.
+ </returns>
+</member>
+<member name="M:B2R2.RegTypeModule.fromBitWidth``1(System.Int32)">
+ <summary>
+   Get the corresponding integer RegType from the given bit width. When a
+   negative integer is given, it will return a floating point type.
+ </summary>
+ <param name="n">Bit width in integer.</param>
+ <returns>
+   A <see cref="T:B2R2.RegType"/>.
+ </returns>
+</member>
+<member name="M:B2R2.RegTypeModule.toByteWidth(System.Int32)">
+ <summary>
+   Get a byte width from a RegType.
+ </summary>
+ <param name="t">RegType.</param>
+ <returns>
+   A byte width in integer of the given RegType.
+ </returns>
+</member>
+<member name="M:B2R2.RegTypeModule.toBitWidth(System.Int32)">
+ <summary>
+   Convert a <see cref="T:B2R2.RegType"/> to an integer of bit width.
+ </summary>
+ <param name="t">RegType.</param>
+ <returns>
+   A bit width in integer of the given RegType.
+ </returns>
+</member>
+<member name="M:B2R2.RegTypeModule.isFP(System.Int32)">
+ <summary>
+   Check if the given <see cref="T:B2R2.RegType"/> is a floating-point (FP)
+   type.
+ </summary>
+ <param name="t">RegType.</param>
+ <returns>
+   A Boolean value that is true if the given RegType is a floating-point
+   type, false otherwise.
+ </returns>
+</member>
+<member name="M:B2R2.RegTypeModule.toString(System.Int32)">
+ <summary>
+   Convert <see cref="T:B2R2.RegType"/> to string.
+ </summary>
+ <param name="t">RegType.</param>
+ <returns>
+   A string representation for RegType. For example, I32 means a 32-bit
+   integer type.
+ </returns>
+</member>
+<member name="T:B2R2.RegTypeModule">
+ <summary>
+   A helper for <see cref="T:B2R2.RegType"/>.
+ </summary>
+</member>
+<member name="T:B2R2.RegisterIDModule.T">
+<summary>
+ A unit for register IDs.
+</summary>
+</member>
+<member name="M:B2R2.RegisterIDModule.create(System.Int32)">
+<summary>
+ Create a platform-independent register ID representation.
+</summary>
+</member>
+<member name="T:B2R2.RegisterIDModule">
+<summary>
+ This class stores an identifier for a register. Each register in B2R2 has
+ its own ID, which is essentially an integer value. However, one needs to go
+ through this class to use a RegisterID.
+</summary>
+</member>
+<member name="T:B2R2.RegisterSetBuilder">
+<summary>
+ A helper module for building a RegisterSet.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSetModule.isEmpty(B2R2.RegisterSet)">
+<summary>
+ Is the register set empty?
+</summary>
+</member>
+<member name="M:B2R2.RegisterSetModule.exist(System.Int32,B2R2.RegisterSet)">
+<summary>
+ Check the existence of a register in the register set.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSetModule.add(System.Int32,B2R2.RegisterSet)">
+<summary>
+ Add a register from the register set.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSetModule.remove(System.Int32,B2R2.RegisterSet)">
+<summary>
+ Remove a register from the register set.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSetModule.intersect(B2R2.RegisterSet,B2R2.RegisterSet)">
+<summary>
+ Make an intersection of two register sets.
+</summary>
+</member>
+<member name="M:B2R2.RegisterSetModule.union(B2R2.RegisterSet,B2R2.RegisterSet)">
+<summary>
+ Make a union of two register sets.
+</summary>
+</member>
+<member name="P:B2R2.RegisterSetModule.empty">
+<summary>
+ Returns an empty RegisterSet.
+</summary>
+</member>
+<member name="T:B2R2.RegisterSetModule">
+<summary>
+ RegisterSet is an efficient representation for managing a set of registers.
+</summary>
+</member>
+<member name="M:B2R2.WordSizeModule.is64(B2R2.WordSize)">
+<summary>
+ Is the given word size 64 bit?
+</summary>
+</member>
+<member name="M:B2R2.WordSizeModule.is32(B2R2.WordSize)">
+<summary>
+ Is the given word size 32 bit?
+</summary>
+</member>
+<member name="M:B2R2.WordSizeModule.toRegType(B2R2.WordSize)">
+<summary>
+ Transform a word size into a RegType.
+</summary>
+</member>
+<member name="M:B2R2.WordSizeModule.toByteWidth(B2R2.WordSize)">
+<summary>
+ Transform a word size into a byte length.
+</summary>
+</member>
+<member name="T:B2R2.WordSizeModule">
+<summary>
+ A helper module for the WordSize type.
+</summary>
+</member>
+<member name="M:B2R2.EndianModule.toString(B2R2.Endian)">
+ <summary>
+   Get the string representation from an Endian.
+ </summary>
+</member>
+<member name="M:B2R2.EndianModule.ofString(System.String)">
+ <summary>
+   Get Endian from a string.
+ </summary>
+ <param name="str">The given string.</param>
+ <returns>
+   Endian.
+ </returns>
+</member>
+<member name="T:B2R2.EndianModule">
+<summary>
+ A helper module for Endian type.
+</summary>
+</member>
+<member name="M:B2R2.OSModule.isRunnable(System.String)">
+<summary>
+ Test if the given program name is runnable in the current environment
+ by analyzing the PATH environment variable.
+</summary>
+</member>
+<member name="P:B2R2.OSModule.onWindows">
+<summary>
+ Am I running on Windows?
+</summary>
+</member>
+<member name="P:B2R2.OSModule.osType">
+<summary>
+ Operating System (OS) type.
+</summary>
+</member>
+<member name="T:B2R2.OSModule">
+<summary>
+ A helper module for OS type.
+</summary>
+</member>
+<member name="T:B2R2.ArchOperationModeModule">
+<summary>
+ A helper module for ArchOperationMode.
+</summary>
+</member>
+<member name="M:B2R2.FileFormatModule.isELF(B2R2.FileFormat)">
+<summary>
+ Check whether the given format is ELF.
+</summary>
+</member>
+<member name="T:B2R2.FileFormatModule">
+<summary>
+ A helper module for FileFormat type.
+</summary>
+</member>
+<member name="M:B2R2.AddrModule.toString(B2R2.WordSize,System.UInt64)">
+<summary>
+ Convert the given address to a hex-string.
+</summary>
+</member>
+<member name="M:B2R2.ARMap.GetOverlaps``1(B2R2.AddrRange,B2R2.ARMap{``0})">
+ <summary>
+   Return a sequence of overlapping mappings of the given interval.
+ </summary>
+ <param name="range">The interval.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   A sequence of mappings.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.Fold``2(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{B2R2.AddrRange,Microsoft.FSharp.Core.FSharpFunc{``1,``0}}},``0,B2R2.ARMap{``1})">
+ <summary>
+   Fold over the tree.
+ </summary>
+ <param name="fn">Folder.</param>
+ <param name="acc">Accumulator.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   Accumulated value.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.Iterate``1(Microsoft.FSharp.Core.FSharpFunc{B2R2.AddrRange,Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.Unit}},B2R2.ARMap{``0})">
+ <summary>
+   Iterate over the tree.
+ </summary>
+ <param name="fn">Iterator.</param>
+ <param name="tree">The interval tree.</param>
+</member>
+<member name="M:B2R2.ARMap.Count``1(B2R2.ARMap{``0})">
+ <summary>
+   Return the number of bindings in the interval map.
+ </summary>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   The number of bindings.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.TryFindByAddr``1(System.UInt64,B2R2.ARMap{``0})">
+ <summary>
+   Same as findByAddr, except that this returns an option-wrapped type.
+ </summary>
+ <param name="addr">The address.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   The value associated with the given address.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.TryFind``1(B2R2.AddrRange,B2R2.ARMap{``0})">
+ <summary>
+   Same as find, except that this returns an option-wrapped type.
+ </summary>
+ <param name="range">The address range.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   The value associated with the given interval.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.TryFindKey``1(System.UInt64,B2R2.ARMap{``0})">
+ <summary>
+   Find an interval stored in the interval tree map, which includes the
+   given address.
+ </summary>
+ <param name="addr">The address.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   The found interval wrapped with option.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.FindByAddr``1(System.UInt64,B2R2.ARMap{``0})">
+ <summary>
+   Find the mapping that matches with the given range. Unlike find, this
+   function can return a range that covers the given address.
+ </summary>
+ <param name="addr">The address.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   The value associated with the given address.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.Find``1(B2R2.AddrRange,B2R2.ARMap{``0})">
+ <summary>
+   Find the mapping that exactly matches with the given range.
+ </summary>
+ <param name="range">The address range.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   The value associated with the given interval.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.ContainsRange``1(B2R2.AddrRange,B2R2.ARMap{``0})">
+ <summary>
+   Check whether the exact range exists in the interval map.
+ </summary>
+ <param name="range">The address range.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   True if the interval tree contains the interval, false otherwise.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.ContainsAddr``1(System.UInt64,B2R2.ARMap{``0})">
+ <summary>
+   Check whether a given Addr exists in any of the ranges in the map.
+ </summary>
+ <param name="k">Address.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   True if the interval tree contains an interval that includes the given
+   address, false otherwise.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.RemoveAddr``1(System.UInt64,B2R2.ARMap{``0})">
+ <summary>
+   Remove a mapping that matches with the given address. Unlike remove,
+   this function will remove an interval that includes the given address.
+ </summary>
+ <param name="addr">The address.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   A new interval tree.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.Remove``1(B2R2.AddrRange,B2R2.ARMap{``0})">
+ <summary>
+   Remove a mapping that matches exactly with the given range. To remove a
+   mapping that covers the given address, use removeAddr.
+ </summary>
+ <param name="k">The interval to find.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   A new interval tree.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.Replace``1(B2R2.AddrRange,``0,B2R2.ARMap{``0})">
+ <summary>
+   This function is the same as add except that it will overwrite the
+   existing range if it exactly matches with the given range. If ranges
+   overlap, this function will still raise RangeOverlapException.
+ </summary>
+ <param name="k">AddrRange as a key.</param>
+ <param name="v">The value to be added.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   A new interval tree.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.AddRange``1(System.UInt64,System.UInt64,``0,B2R2.ARMap{``0})">
+ <summary>
+   This function is the same as add except that this one takes in two
+   separate parameters for min and max, instead of taking in an AddrRange
+   as input.
+ </summary>
+ <param name="min">The min value of the interval.</param>
+ <param name="max">The max value of the interval.</param>
+ <param name="v">The value to be added.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   A new interval tree.
+ </returns>
+ <exception cref="T:B2R2.RangeOverlapException">
+   Thrown when there is an existing (overlapping) interval in the tree.
+ </exception>
+</member>
+<member name="M:B2R2.ARMap.Add``1(B2R2.AddrRange,``0,B2R2.ARMap{``0})">
+ <summary>
+   Add a mapping from an interval to the value in the interval tree.
+ </summary>
+ <param name="k">AddrRange as a key.</param>
+ <param name="v">The value to be added.</param>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   A new interval tree.
+ </returns>
+ <exception cref="T:B2R2.RangeOverlapException">
+   Thrown when there is an existing (overlapping) interval in the tree.
+ </exception>
+</member>
+<member name="M:B2R2.ARMap.IsEmpty``1(B2R2.ARMap{``0})">
+ <summary>
+   Check if the give interval map is empty.
+ </summary>
+ <param name="tree">The interval tree.</param>
+ <returns>
+   Returns true if the tree is empty, false otherwise.
+ </returns>
+</member>
+<member name="M:B2R2.ARMap.Empty``1">
+<summary>
+ Return an empty map.
+</summary>
+</member>
+<member name="T:B2R2.ARMap">
+<summary>
+ This is a helper class for manipulating an ARMap (AddressRangeMap), a
+ non-overlapping interval map. We provide both F#- and C#-style APIs.
+</summary>
+</member>
+<member name="M:B2R2.ByteArray.toUInt32Arr(System.Byte[])">
+<summary>
+ Convert a byte array into a uint32 array.
+</summary>
+</member>
+<member name="M:B2R2.ByteArray.tryFindIdx(System.UInt64,System.Byte[],System.Byte[])">
+<summary>
+ Find a matching byte position. If there is no match, this function will
+ return None.
+</summary>
+</member>
+<member name="M:B2R2.ByteArray.findIdxs(System.UInt64,System.Byte[],System.Byte[])">
+<summary>
+ Find and return the offsets of all the matching byte positions. The final
+ byte positions are adjusted by the given offset.
+</summary>
+</member>
+<member name="M:B2R2.ByteArray.extractCString(System.Byte[],System.Int32)">
+<summary>
+ Extract a C-string (string that ends with a NULL char) from a byte array.
+</summary>
+</member>
+<member name="M:B2R2.ByteArray.ofHexString(System.String)">
+<summary>
+ Convert a hex string to a byte array.
+</summary>
+</member>
+<member name="T:B2R2.ByteArray">
+<summary>
+ It is sometimes convenient to consider a binary chunk as a byte array. This
+ module provides several useful functions to deal with byte arrays.
+</summary>
+</member>
+<member name="M:B2R2.LEB128.DecodeSInt32(System.Byte[])">
+<summary>
+ Decode a LEB128-encoded integer into int32. This function returns a tuple of
+ (the decoded int32, and the count of how many bytes were read).
+</summary>
+</member>
+<member name="M:B2R2.LEB128.DecodeSInt64(System.Byte[])">
+<summary>
+ Decode a LEB128-encoded integer into int64. This function returns a tuple of
+ (the decoded int64, and the count of how many bytes were read).
+</summary>
+</member>
+<member name="M:B2R2.LEB128.DecodeUInt32(System.Byte[])">
+<summary>
+ Decode a LEB128-encoded integer into uint32. This function returns a tuple
+ of (the decoded uint32, and the count of how many bytes were read).
+</summary>
+</member>
+<member name="M:B2R2.LEB128.DecodeUInt64(System.Byte[])">
+<summary>
+ Decode a LEB128-encoded integer into uint64. This function returns a tuple
+ of (the decoded uint64, and the count of how many bytes were read).
+</summary>
+</member>
+<member name="T:B2R2.LEB128.LEB128DecodeException">
+<summary>
+ Raised when LEB128 decoding failed, e.g., when the given input bytes has
+ incorrect encoding.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.TakeUntil(Microsoft.FSharp.Core.FSharpFunc{`0,System.Boolean},B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Take a subset of a FingerTree that satisfies the predicate (p).
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.TailR(B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Return tail of the right subtree.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.TailL(B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Return tail of the left subtree.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.Split(Microsoft.FSharp.Core.FSharpFunc{`0,System.Boolean},B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Split a FingerTree into two based on a predicate (p).
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.Snoc(B2R2.FingerTree.FingerTree{`0,`1},`1)">
+<summary>
+ (infixl): Append an element to a FingerTree.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.Lookup(Microsoft.FSharp.Core.FSharpFunc{`0,System.Boolean},`0,B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ TODO: (faster) lookup functions without building extra trees
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.HeadR(B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Return head of the right subtree.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.HeadL(B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Return head of the left subtree.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.DropUntil(Microsoft.FSharp.Core.FSharpFunc{`0,System.Boolean},B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Take a subset of a FingerTree that does not satisfies the predicate (p).
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.Cons(`1,B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ (infixr): Prepend an element to a FingerTree.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.Op`2.Concat(B2R2.FingerTree.FingerTree{`0,`1},B2R2.FingerTree.FingerTree{`0,`1})">
+<summary>
+ Concatenate two FingerTrees into one.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.Op`2">
+<summary>
+ This is a helper class that defines FingerTree operations. This class
+ contains only static members. We use this class to simplify type annotations
+ for polymorphic recursion.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.Split`2">
+<summary>
+ Split represents an element in a FingerTree with containers of elements to
+ its left and right.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.View`2">
+<summary>
+ View of a FingerMap.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.FingerTree`2">
+<summary>
+ FingerTree defined in [Hinze 2006]. N.B. non-regular type is used.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.Digit`2">
+<summary>
+ Digit nodes actually store values.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.Node`2">
+<summary>
+ 2-3 tree node.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.Size">
+<summary>
+ A size monoid for random access.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.InterMonoid`1">
+<summary>
+ A monoid that represents an interval (uint64 * uint64).
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.Ordered`1">
+<summary>
+ A monoid that represents ordering.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.Priority`1">
+<summary>
+ A monoid that represents a priority.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.IMeasured`1">
+<summary>
+ A &quot;typeclass&quot; that has a measurement. The measurement should be a monoid.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree.IMonoid`1">
+<summary>
+ Monoid with an identity, and an associative operation.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.foldl``3(Microsoft.FSharp.Core.FSharpFunc{``2,Microsoft.FSharp.Core.FSharpFunc{``1,``2}},``2,B2R2.FingerTree.FingerTree{``0,``1})">
+<summary>
+ Reduce a FingerTree from the left.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.foldr``3(Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{``2,``2}},B2R2.FingerTree.FingerTree{``0,``1},``2)">
+<summary>
+ Reduce a FingerTree from the right.
+</summary>
+</member>
+<member name="M:B2R2.FingerTree.calib``1(B2R2.FingerTree.IMeasured{``0})">
+<summary>
+ Returns the measurement.
+</summary>
+</member>
+<member name="T:B2R2.FingerTree">
+<summary>
+ FingerTree implementation.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.fold``2(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{B2R2.AddrRange,Microsoft.FSharp.Core.FSharpFunc{``1,``0}}},``0,B2R2.IntervalMap{``1})">
+<summary>
+ Fold the map.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.remove``1(B2R2.AddrRange,B2R2.IntervalMap{``0})">
+<summary>
+ Remove the exactly matched interval from the map.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.replace``1(B2R2.AddrRange,``0,B2R2.IntervalMap{``0})">
+<summary>
+ Replace the exactly matched interval from the map to the given one.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.contains``1(B2R2.AddrRange,B2R2.IntervalMap{``0})">
+<summary>
+ Check whether the exact range exists in the interval tree.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.containsAddr``1(System.UInt64,B2R2.IntervalMap{``0})">
+<summary>
+ Check whether the given address exists in the interval tree.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.includeRange``1(B2R2.AddrRange,B2R2.IntervalMap{``0})">
+<summary>
+ Check whether the given address interval is included in any of the
+ intervals in the interval map.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.tryFindByMin``1(System.UInt64,B2R2.IntervalMap{``0})">
+<summary>
+ Find an interval that has the same low bound (Min) as the given address.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.tryFind``1(B2R2.AddrRange,B2R2.IntervalMap{``0})">
+<summary>
+ Find exactly matching interval.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.findAll``1(B2R2.AddrRange,B2R2.IntervalMap{``0})">
+<summary>
+ Find all overlapping intervals.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.addByTuple``1(System.UInt64,System.UInt64,``0,B2R2.IntervalMap{``0})">
+<summary>
+ Add an item to the interval tree.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.add``1(B2R2.AddrRange,``0,B2R2.IntervalMap{``0})">
+<summary>
+ Add an item to the interval tree.
+</summary>
+</member>
+<member name="M:B2R2.IntervalMap.empty``1">
+<summary>
+ Empty interval tree.
+</summary>
+</member>
+<member name="T:B2R2.IntervalMap">
+<summary>
+ Helper module for IntervalMap.
+</summary>
+</member>
+<member name="M:B2R2.IntervalSetModule.contains(B2R2.AddrRange,B2R2.IntervalSet)">
+<summary>
+ Check whether the exact interval exists in the interval set.
+</summary>
+</member>
+<member name="M:B2R2.IntervalSetModule.containsAddr(System.UInt64,B2R2.IntervalSet)">
+<summary>
+ Check whether the given address exists in the interval set.
+</summary>
+</member>
+<member name="M:B2R2.IntervalSetModule.tryFindByAddr(System.UInt64,B2R2.IntervalSet)">
+<summary>
+ Find and return the first matching interval from the given address.
+</summary>
+</member>
+<member name="M:B2R2.IntervalSetModule.tryFind(B2R2.AddrRange,B2R2.IntervalSet)">
+<summary>
+ Find and return the first matching interval from the given range.
+</summary>
+</member>
+<member name="M:B2R2.IntervalSetModule.findAll(B2R2.AddrRange,B2R2.IntervalSet)">
+<summary>
+ Find all overlapping intervals.
+</summary>
+</member>
+<member name="M:B2R2.IntervalSetModule.includeRange(B2R2.AddrRange,B2R2.IntervalSet)">
+<summary>
+ Check whether the given address interval is included in any of the
+ intervals in the interval set.
+</summary>
+</member>
+<member name="M:B2R2.IntervalSetModule.add(B2R2.AddrRange,B2R2.IntervalSet)">
+<summary>
+ Add an item to the interval tree.
+</summary>
+</member>
+<member name="P:B2R2.IntervalSetModule.empty">
+<summary>
+ Empty interval tree.
+</summary>
+</member>
+<member name="T:B2R2.IntervalSetModule">
+<summary>
+ Helper module for IntervalSet.
+</summary>
+</member>
+<member name="M:B2R2.RandomAccessQueue.splitAt``1(System.UInt32,B2R2.RandomAccessQueue{``0})">
+<summary>
+ Split the queue based on the given index into two (left and right). The
+ left queue will contain the entry at the given index.
+</summary>
+</member>
+<member name="M:B2R2.RandomAccessQueue.empty``1">
+<summary>
+ Empty interval tree.
+</summary>
+</member>
+<member name="T:B2R2.RandomAccessQueue">
+<summary>
+ A helper module for RandomAccessQueue&lt;&apos;a&gt;.
+</summary>
+</member>
+<member name="M:B2R2.Utils.writeB2R2(System.Boolean)">
+<summary>
+ Write B2R2 logo to console. We can selectively append a new line at the end.
+</summary>
+</member>
+<member name="M:B2R2.Utils.tupleToOpt``1(System.Boolean,``0)">
+<summary>
+ Convert a tuple result to an option type. The tuple result is obtained from
+ the TryGetValue pattern, e.g., IDictionary.
+</summary>
+</member>
+<member name="M:B2R2.Utils.op_EqualsEqualsEquals``1(``0,``0)">
+<summary>
+ Physical equality.
+</summary>
+</member>
+<member name="M:B2R2.Utils.uncurry``3(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``1,``2}},``0,``1)">
+<summary>
+ Uncurry a pair of arguments.
+</summary>
+</member>
+<member name="M:B2R2.Utils.curry``3(Microsoft.FSharp.Core.FSharpFunc{System.Tuple{``0,``1},``2},``0,``1)">
+<summary>
+ Curry a pair of arguments.
+</summary>
+</member>
+<member name="M:B2R2.Utils.tap``1(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.Unit},``0)">
+<summary>
+ Apply a procedure in the middle of function pipes.
+</summary>
+</member>
+<member name="M:B2R2.Utils.impossible``1">
+<summary>
+ Fatal error. This should never happen.
+</summary>
+</member>
+<member name="M:B2R2.Utils.futureFeature``1">
+<summary>
+ Not implemented features encountered, so raise an exception and die.
+</summary>
+</member>
+<member name="M:B2R2.Utils.assertByCond(System.Boolean,System.Exception)">
+<summary>
+ Assert check condition. If not, raise an exception (exn).
+</summary>
+</member>
+<member name="M:B2R2.Utils.assertEqual``1(``0,``0,System.Exception)">
+<summary>
+ Assert two values are equal. If not, raise an exception (exn).
+</summary>
+</member>
+<member name="T:B2R2.Utils">
+<summary>
+ A set of convenient misc. functions.
+</summary>
+</member>
+<member name="P:B2R2.Attribution.copyright">
+<summary>
+ Copyright by SoftSec Lab. @ KAIST.
+</summary>
+</member>
+<member name="T:B2R2.Attribution">
+<summary>
+ B2R2 project attribution.
+</summary>
+</member>
+</members>
+</doc>

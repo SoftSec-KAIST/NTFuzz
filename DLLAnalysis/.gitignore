@@ -1,0 +1,9 @@
+.vs
+.idea/
+*.swp
+*.swo
+obj/
+bin/
+build/
+log/
+output/

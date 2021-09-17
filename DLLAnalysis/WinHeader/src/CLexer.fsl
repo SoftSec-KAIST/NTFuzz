@@ -1,0 +1,736 @@
+{
+module WinHeader.CLexer
+
+open FSharp.Text.Lexing
+open CParser
+
+let keywords =
+  [|
+
+    "_Inexpressible_", INEXPRESSIBLE;
+    // In/out annotations.
+    "_In_", IN;
+    "_In_opt_", IN;
+    "_In_z_", IN;
+    "_In_opt_z_", IN;
+    "_Out_", OUT;
+    "_Out_opt_", OUT;
+    "_Inout_", INOUT;
+    "_Inout_opt_", INOUT;
+    "_Inout_z_", INOUT;
+    "_Inout_opt_z_", INOUT;
+    "_Outptr_", OUT;
+    "_Outptr_result_maybenull_", OUT;
+    "_Outptr_opt_", OUT;
+    "_Outptr_opt_result_maybenull_", OUT;
+    "_Outptr_result_z_", OUT;
+    "_Outptr_opt_result_z_", OUT;
+    "_Outptr_result_maybenull_z_", OUT;
+    "_Outptr_opt_result_maybenull_z_", OUT;
+    "_Outptr_result_nullonfailure_", OUT;
+    "_Outptr_opt_result_nullonfailure_", OUT;
+    "_COM_Outptr_", OUT;
+    "_COM_Outptr_result_maybenull_", OUT;
+    "_COM_Outptr_opt_", OUT;
+    "_COM_Outptr_opt_result_maybenull_", OUT;
+
+    "_In_reads_to_ptr_", IN_WITH_ARG;
+    "_In_reads_to_ptr_opt_", IN_WITH_ARG;
+    "_In_reads_to_ptr_z_", IN_WITH_ARG;
+    "_In_reads_to_ptr_opt_z_", IN_WITH_ARG;
+    "_Out_writes_to_ptr_", OUT_WITH_ARG;
+    "_Out_writes_to_ptr_opt_", OUT_WITH_ARG;
+    "_Out_writes_to_ptr_z_", OUT_WITH_ARG;
+    "_Out_writes_to_ptr_opt_z_", OUT_WITH_ARG;
+
+    "_In_reads_bytes_", IN_BYTE_BUFFER;
+    "_In_reads_bytes_opt_", IN_BYTE_BUFFER;
+    "_Out_writes_bytes_", OUT_BYTE_BUFFER;
+    "_Out_writes_bytes_opt_", OUT_BYTE_BUFFER;
+    "_Out_writes_bytes_to_", OUT_BYTE_BUFFER;
+    "_Out_writes_bytes_to_opt_", OUT_BYTE_BUFFER;
+    "_Out_writes_bytes_all_", OUT_BYTE_BUFFER;
+    "_Out_writes_bytes_all_opt_", OUT_BYTE_BUFFER;
+    "_Inout_updates_bytes_", INOUT_BYTE_BUFFER;
+    "_Inout_updates_bytes_opt_", INOUT_BYTE_BUFFER;
+    "_Inout_updates_bytes_to_", INOUT_BYTE_BUFFER;
+    "_Inout_updates_bytes_to_opt_", INOUT_BYTE_BUFFER;
+    "_Inout_updates_bytes_all_", INOUT_BYTE_BUFFER;
+    "_Inout_updates_bytes_all_opt_", INOUT_BYTE_BUFFER;
+
+    "_In_reads_", IN_COUNT_BUFFER;
+    "_In_reads_opt_", IN_COUNT_BUFFER;
+    "_In_reads_z_", IN_COUNT_BUFFER;
+    "_In_reads_opt_z_", IN_COUNT_BUFFER;
+    "_In_reads_or_z_", IN_COUNT_BUFFER;
+    "_In_reads_or_z_opt_", IN_COUNT_BUFFER;
+    "_Out_writes_", OUT_COUNT_BUFFER;
+    "_Out_writes_opt_", OUT_COUNT_BUFFER;
+    "_Out_writes_z_", OUT_COUNT_BUFFER;
+    "_Out_writes_opt_z_", OUT_COUNT_BUFFER;
+    "_Out_writes_to_", OUT_COUNT_BUFFER;
+    "_Out_writes_to_opt_", OUT_COUNT_BUFFER;
+    "_Out_writes_all_", OUT_COUNT_BUFFER;
+    "_Out_writes_all_opt_", OUT_COUNT_BUFFER;
+    "_Inout_updates_", INOUT_COUNT_BUFFER;
+    "_Inout_updates_opt_", INOUT_COUNT_BUFFER;
+    "_Inout_updates_z_", INOUT_COUNT_BUFFER;
+    "_Inout_updates_opt_z_", INOUT_COUNT_BUFFER;
+    "_Inout_updates_to_", INOUT_COUNT_BUFFER;
+    "_Inout_updates_to_opt_", INOUT_COUNT_BUFFER;
+    "_Inout_updates_all_", INOUT_COUNT_BUFFER;
+    "_Inout_updates_all_opt_", INOUT_COUNT_BUFFER;
+
+    "_Outptr_result_bytebuffer_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_opt_result_bytebuffer_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_result_bytebuffer_to_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_opt_result_bytebuffer_to_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_result_bytebuffer_all_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_opt_result_bytebuffer_all_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_result_bytebuffer_maybenull_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_opt_result_bytebuffer_maybenull_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_result_bytebuffer_to_maybenull_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_opt_result_bytebuffer_to_maybenull_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_result_bytebuffer_all_maybenull_", OUT_BYTE_BUFFER_PTR;
+    "_Outptr_opt_result_bytebuffer_all_maybenull_", OUT_BYTE_BUFFER_PTR;
+
+    "_Outptr_result_buffer_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_opt_result_buffer_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_result_buffer_to_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_opt_result_buffer_to_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_result_buffer_all_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_opt_result_buffer_all_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_result_buffer_maybenull_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_opt_result_buffer_maybenull_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_result_buffer_to_maybenull_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_opt_result_buffer_to_maybenull_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_result_buffer_all_maybenull_", OUT_COUNT_BUFFER_PTR;
+    "_Outptr_opt_result_buffer_all_maybenull_", OUT_COUNT_BUFFER_PTR;
+
+    // Add-hocs in/out annotations. Not found from sal.h header file.
+    "_In_NLS_string_", IN_COUNT_BUFFER;
+    "_In_NLS_string_opt_", IN_COUNT_BUFFER;
+
+    // Deprecated annotations are still used in some files...
+
+    "__in", IN;
+    "__in_z", IN;
+    "__in_nz", IN;
+    "__out", OUT;
+    "__out_z", OUT;
+    "__out_z_opt", OUT;
+    "__out_nz", OUT;
+    "__out_nz_opt", OUT;
+    "__inout", INOUT;
+    "__inout_z", INOUT;
+    "__inout_nz", INOUT;
+    "__in_opt", IN;
+    "__in_z_opt", IN;
+    "__in_nz_opt", IN;
+    "__out_opt", OUT;
+    "__inout_opt", INOUT;
+    "__inout_z_opt", INOUT;
+    "__inout_nz_opt", INOUT;
+    "__deref_out", OUT;
+    "__deref_out_z", OUT;
+    "__deref_out_nz", OUT;
+    "__deref_inout", INOUT;
+    "__deref_inout_z", INOUT;
+    "__deref_inout_nz", INOUT;
+    "__deref_out_opt", OUT;
+    "__deref_out_z_opt", OUT;
+    "__deref_out_nz_opt", OUT;
+    "__deref_inout_opt", INOUT;
+    "__deref_inout_z_opt", INOUT;
+    "__deref_inout_nz_opt", INOUT;
+    "__deref_opt_out", OUT;
+    "__deref_opt_out_z", OUT;
+    "__deref_opt_inout", INOUT;
+    "__deref_opt_inout_z", INOUT;
+    "__deref_opt_inout_nz", INOUT;
+    "__deref_opt_out_opt", OUT;
+    "__deref_opt_out_z_opt", OUT;
+    "__deref_opt_out_nz_opt", OUT;
+    "__deref_opt_inout_opt", INOUT;
+    "__deref_opt_inout_z_opt", INOUT;
+    "__deref_opt_inout_nz_opt", INOUT;
+
+    "__in_bcount", IN_BYTE_BUFFER;
+    "__in_bcount_z", IN_BYTE_BUFFER;
+    "__in_bcount_nz", IN_BYTE_BUFFER;
+    "__out_bcount", OUT_BYTE_BUFFER;
+    "__out_bcount_part", OUT_BYTE_BUFFER;
+    "__out_bcount_full", OUT_BYTE_BUFFER;
+    "__out_bcount_z", OUT_BYTE_BUFFER;
+    "__out_bcount_part_z", OUT_BYTE_BUFFER;
+    "__out_bcount_full_z", OUT_BYTE_BUFFER;
+    "__out_bcount_nz", OUT_BYTE_BUFFER;
+    "__inout_bcount", INOUT_BYTE_BUFFER;
+    "__inout_bcount_part", INOUT_BYTE_BUFFER;
+    "__inout_bcount_full", INOUT_BYTE_BUFFER;
+    "__inout_bcount_z", INOUT_BYTE_BUFFER;
+    "__inout_bcount_nz", INOUT_BYTE_BUFFER;
+    "__in_bcount_opt", IN_BYTE_BUFFER;
+    "__in_bcount_z_opt", IN_BYTE_BUFFER;
+    "__in_bcount_nz_opt", IN_BYTE_BUFFER;
+    "__out_bcount_opt", OUT_BYTE_BUFFER;
+    "__out_bcount_part_opt", OUT_BYTE_BUFFER;
+    "__out_bcount_full_opt", OUT_BYTE_BUFFER;
+    "__out_bcount_z_opt", OUT_BYTE_BUFFER;
+    "__out_bcount_part_z_opt", OUT_BYTE_BUFFER;
+    "__out_bcount_full_z_opt", OUT_BYTE_BUFFER;
+    "__out_bcount_nz_opt", OUT_BYTE_BUFFER;
+    "__inout_bcount_opt", INOUT_BYTE_BUFFER;
+    "__inout_bcount_part_opt", INOUT_BYTE_BUFFER;
+    "__inout_bcount_full_opt", INOUT_BYTE_BUFFER;
+    "__inout_bcount_z_opt", INOUT_BYTE_BUFFER;
+    "__inout_bcount_nz_opt", INOUT_BYTE_BUFFER;
+    "__deref_out_bcount", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_part", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_full", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_z", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_nz", OUT_BYTE_BUFFER;
+    "__deref_inout_bcount", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_part", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_full", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_z", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_nz", INOUT_BYTE_BUFFER;
+    "__deref_out_bcount_opt", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_part_opt", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_full_opt", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_z_opt", OUT_BYTE_BUFFER;
+    "__deref_out_bcount_nz_opt", OUT_BYTE_BUFFER;
+    "__deref_inout_bcount_opt", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_part_opt", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_full_opt", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_z_opt", INOUT_BYTE_BUFFER;
+    "__deref_inout_bcount_nz_opt", INOUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount", OUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount_part", OUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount_full", OUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_part", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_full", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_z", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_nz", INOUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount_opt", OUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount_part_opt", OUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount_full_opt", OUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount_z_opt", OUT_BYTE_BUFFER;
+    "__deref_opt_out_bcount_nz_opt", OUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_opt", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_part_opt", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_full_opt", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_z_opt", INOUT_BYTE_BUFFER;
+    "__deref_opt_inout_bcount_nz_opt", INOUT_BYTE_BUFFER;
+
+    "__in_ecount", IN_COUNT_BUFFER;
+    "__in_ecount_z", IN_COUNT_BUFFER;
+    "__in_ecount_nz", IN_COUNT_BUFFER;
+    "__out_ecount", OUT_COUNT_BUFFER;
+    "__out_ecount_part", OUT_COUNT_BUFFER;
+    "__out_ecount_full", OUT_COUNT_BUFFER;
+    "__out_ecount_z", OUT_COUNT_BUFFER;
+    "__out_ecount_part_z", OUT_COUNT_BUFFER;
+    "__out_ecount_full_z", OUT_COUNT_BUFFER;
+    "__out_ecount_nz", OUT_COUNT_BUFFER;
+    "__inout_ecount", INOUT_COUNT_BUFFER;
+    "__inout_ecount_part", INOUT_COUNT_BUFFER;
+    "__inout_ecount_full", INOUT_COUNT_BUFFER;
+    "__inout_ecount_z", INOUT_COUNT_BUFFER;
+    "__inout_ecount_nz", INOUT_COUNT_BUFFER;
+    "__in_ecount_opt", IN_COUNT_BUFFER;
+    "__in_ecount_z_opt", IN_COUNT_BUFFER;
+    "__in_ecount_nz_opt", IN_COUNT_BUFFER;
+    "__out_ecount_opt", OUT_COUNT_BUFFER;
+    "__out_ecount_part_opt", OUT_COUNT_BUFFER;
+    "__out_ecount_full_opt", OUT_COUNT_BUFFER;
+    "__out_ecount_z_opt", OUT_COUNT_BUFFER;
+    "__out_ecount_part_z_opt", OUT_COUNT_BUFFER;
+    "__out_ecount_full_z_opt", OUT_COUNT_BUFFER;
+    "__out_ecount_nz_opt", OUT_COUNT_BUFFER;
+    "__inout_ecount_opt", INOUT_COUNT_BUFFER;
+    "__inout_ecount_part_opt", INOUT_COUNT_BUFFER;
+    "__inout_ecount_full_opt", INOUT_COUNT_BUFFER;
+    "__inout_ecount_z_opt", INOUT_COUNT_BUFFER;
+    "__inout_ecount_z_opt", INOUT_COUNT_BUFFER;
+    "__inout_ecount_nz_opt", INOUT_COUNT_BUFFER;
+    "__deref_out_ecount", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_part", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_full", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_z", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_nz", OUT_COUNT_BUFFER;
+    "__deref_inout_ecount", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_part", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_full", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_z", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_nz", INOUT_COUNT_BUFFER;
+    "__deref_out_ecount_opt", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_part_opt", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_full_opt", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_z_opt", OUT_COUNT_BUFFER;
+    "__deref_out_ecount_nz_opt", OUT_COUNT_BUFFER;
+    "__deref_inout_ecount_opt", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_part_opt", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_full_opt", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_z_opt", INOUT_COUNT_BUFFER;
+    "__deref_inout_ecount_nz_opt", INOUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount", OUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount_part", OUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount_full", OUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_part", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_full", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_z", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_nz", INOUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount_opt", OUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount_part_opt", OUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount_full_opt", OUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount_z_opt", OUT_COUNT_BUFFER;
+    "__deref_opt_out_ecount_nz_opt", OUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_opt", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_part_opt", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_full_opt", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_z_opt", INOUT_COUNT_BUFFER;
+    "__deref_opt_inout_ecount_nz_opt", INOUT_COUNT_BUFFER;
+
+    // And there are other annotations that express buffer size, too.
+
+    "_Readable_bytes_", AUX_BYTE_BUFFER;
+    "_Readable_elements_", AUX_COUNT_BUFFER;
+    "_Writable_bytes_", AUX_BYTE_BUFFER;
+    "_Writable_elements_", AUX_COUNT_BUFFER;
+
+    // RPC related annotations.
+    "__RPC__in", IN;
+    "__RPC__in_string", IN;
+    "__RPC__in_opt", IN;
+    "__RPC__in_opt_string", IN;
+    "__RPC__out", OUT;
+    "__RPC__out_string", OUT;
+    "__RPC__out_opt", OUT;
+    "__RPC__out_opt_string", OUT;
+    "__RPC__deref_in", IN;
+    "__RPC__deref_in_string", IN;
+    "__RPC__deref_in_opt", IN;
+    "__RPC__deref_in_opt_string", IN;
+    "__RPC__deref_out", OUT;
+    "__RPC__deref_out_string", OUT;
+    "__RPC__deref_out_opt", OUT;
+    "__RPC__deref_out_opt_string", OUT;
+    "__RPC__deref_inout", INOUT;
+    "__RPC__deref_inout_string", INOUT;
+    "__RPC__deref_inout_opt", INOUT;
+    "__RPC__in_xcount", IN_WITH_ARG;
+    "__RPC__out_xcount", OUT_WITH_ARG;
+    "__RPC__inout_xcount", INOUT_WITH_ARG;
+
+
+    // Precondition & postcondition annotations.
+
+    "_Pre_defensive_", PREPOST;
+    "_Pre_", PREPOST;
+    "_Pre_z_", PREPOST;
+    "_Pre_valid_", PREPOST;
+    "_Pre_opt_valid_", PREPOST;
+    "_Pre_invalid_", PREPOST;
+    "_Pre_unknown_", PREPOST;
+    "_Pre_notnull_", PREPOST;
+    "_Pre_maybenull_", PREPOST;
+    "_Pre_null_", PREPOST;
+    "_Pre_opt_z_", PREPOST;
+    "_Pre_readonly_", PREPOST;
+    "_Pre_writeonly_", PREPOST;
+    "_Pre_cap_c_one_", PREPOST;
+    "_Pre_opt_cap_c_one_", PREPOST;
+    "_Pre_valid_impl_", PREPOST;
+    "_Pre_impl_", PREPOST;
+    "_Pre_impl_", PREPOST;
+    "_Pre_valid_impl_", PREPOST;
+    "_Pre_impl_", PREPOST;
+    "_Pre_valid_impl_", PREPOST;
+    "_Pre_impl_", PREPOST;
+    "_Post_defensive_", PREPOST;
+    "_Post_", PREPOST;
+    "_Post_z_", PREPOST;
+    "_Post_valid_", PREPOST;
+    "_Post_invalid_", PREPOST;
+    "_Post_ptr_invalid_", PREPOST;
+    "_Post_notnull_", PREPOST;
+    "_Post_null_", PREPOST;
+    "_Post_maybenull_", PREPOST;
+    "_Post_maybez_", PREPOST;
+    "_Post_valid_impl_", PREPOST;
+    "_Post_impl_", PREPOST;
+    "_Post_impl_", PREPOST;
+    "_Post_valid_impl_", PREPOST;
+    "_Post_impl_", PREPOST;
+    "_Post_valid_impl_", PREPOST;
+    "_Post_impl_", PREPOST;
+    "_Deref_pre_z_", PREPOST;
+    "_Deref_pre_opt_z_", PREPOST;
+    "_Deref_pre_valid_", PREPOST;
+    "_Deref_pre_opt_valid_", PREPOST;
+    "_Deref_pre_invalid_", PREPOST;
+    "_Deref_pre_notnull_", PREPOST;
+    "_Deref_pre_maybenull_", PREPOST;
+    "_Deref_pre_null_", PREPOST;
+    "_Deref_pre_readonly_", PREPOST;
+    "_Deref_pre_writeonly_", PREPOST;
+    "_Deref_pre_impl_", PREPOST;
+    "_Deref_post_z_", PREPOST;
+    "_Deref_post_opt_z_", PREPOST;
+    "_Deref_post_valid_", PREPOST;
+    "_Deref_post_opt_valid_", PREPOST;
+    "_Deref_post_notnull_", PREPOST;
+    "_Deref_post_maybenull_", PREPOST;
+    "_Deref_post_null_", PREPOST;
+    "_Deref_post_impl_", PREPOST;
+
+    "_Pre_equal_to_", PREPOST_WITH_ARG;
+    "_Pre_satisfies_", PREPOST_WITH_ARG;
+    "_Pre_readable_size_", PREPOST_WITH_ARG;
+    "_Pre_writable_size_", PREPOST_WITH_ARG;
+    "_Pre_readable_byte_size_", PREPOST_WITH_ARG;
+    "_Pre_writable_byte_size_", PREPOST_WITH_ARG;
+    "_Pre_cap_", PREPOST_WITH_ARG;
+    "_Pre_opt_cap_", PREPOST_WITH_ARG;
+    "_Pre_bytecap_", PREPOST_WITH_ARG;
+    "_Pre_opt_bytecap_", PREPOST_WITH_ARG;
+    "_Pre_cap_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_cap_c_", PREPOST_WITH_ARG;
+    "_Pre_bytecap_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_bytecap_c_", PREPOST_WITH_ARG;
+    "_Pre_cap_m_", PREPOST_WITH_ARG;
+    "_Pre_opt_cap_m_", PREPOST_WITH_ARG;
+    "_Pre_cap_for_", PREPOST_WITH_ARG;
+    "_Pre_opt_cap_for_", PREPOST_WITH_ARG;
+    "_Pre_cap_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_cap_x_", PREPOST_WITH_ARG;
+    "_Pre_bytecap_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_bytecap_x_", PREPOST_WITH_ARG;
+    "_Pre_ptrdiff_cap_", PREPOST_WITH_ARG;
+    "_Pre_opt_ptrdiff_cap_", PREPOST_WITH_ARG;
+    "_Pre_z_cap_", PREPOST_WITH_ARG;
+    "_Pre_opt_z_cap_", PREPOST_WITH_ARG;
+    "_Pre_z_bytecap_", PREPOST_WITH_ARG;
+    "_Pre_opt_z_bytecap_", PREPOST_WITH_ARG;
+    "_Pre_z_cap_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_z_cap_c_", PREPOST_WITH_ARG;
+    "_Pre_z_bytecap_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_z_bytecap_c_", PREPOST_WITH_ARG;
+    "_Pre_z_cap_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_z_cap_x_", PREPOST_WITH_ARG;
+    "_Pre_z_bytecap_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_z_bytecap_x_", PREPOST_WITH_ARG;
+    "_Pre_valid_cap_", PREPOST_WITH_ARG;
+    "_Pre_opt_valid_cap_", PREPOST_WITH_ARG;
+    "_Pre_valid_bytecap_", PREPOST_WITH_ARG;
+    "_Pre_opt_valid_bytecap_", PREPOST_WITH_ARG;
+    "_Pre_valid_cap_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_valid_cap_c_", PREPOST_WITH_ARG;
+    "_Pre_valid_bytecap_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_valid_bytecap_c_", PREPOST_WITH_ARG;
+    "_Pre_valid_cap_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_valid_cap_x_", PREPOST_WITH_ARG;
+    "_Pre_valid_bytecap_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_valid_bytecap_x_", PREPOST_WITH_ARG;
+    "_Pre_count_", PREPOST_WITH_ARG;
+    "_Pre_opt_count_", PREPOST_WITH_ARG;
+    "_Pre_bytecount_", PREPOST_WITH_ARG;
+    "_Pre_opt_bytecount_", PREPOST_WITH_ARG;
+    "_Pre_count_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_count_c_", PREPOST_WITH_ARG;
+    "_Pre_bytecount_c_", PREPOST_WITH_ARG;
+    "_Pre_opt_bytecount_c_", PREPOST_WITH_ARG;
+    "_Pre_count_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_count_x_", PREPOST_WITH_ARG;
+    "_Pre_bytecount_x_", PREPOST_WITH_ARG;
+    "_Pre_opt_bytecount_x_", PREPOST_WITH_ARG;
+    "_Pre_ptrdiff_count_", PREPOST_WITH_ARG;
+    "_Pre_opt_ptrdiff_count_", PREPOST_WITH_ARG;
+    "_Pre_satisfies_impl_", PREPOST_WITH_ARG;
+    "_Pre_satisfies_impl_", PREPOST_WITH_ARG;
+    "_Pre_satisfies_impl_", PREPOST_WITH_ARG;
+    "_Post_equal_to_", PREPOST_WITH_ARG;
+    "_Post_satisfies_", PREPOST_WITH_ARG;
+    "_Post_readable_size_", PREPOST_WITH_ARG;
+    "_Post_writable_size_", PREPOST_WITH_ARG;
+    "_Post_readable_byte_size_", PREPOST_WITH_ARG;
+    "_Post_writable_byte_size_", PREPOST_WITH_ARG;
+    "_Post_cap_", PREPOST_WITH_ARG;
+    "_Post_bytecap_", PREPOST_WITH_ARG;
+    "_Post_count_", PREPOST_WITH_ARG;
+    "_Post_bytecount_", PREPOST_WITH_ARG;
+    "_Post_count_c_", PREPOST_WITH_ARG;
+    "_Post_bytecount_c_", PREPOST_WITH_ARG;
+    "_Post_count_x_", PREPOST_WITH_ARG;
+    "_Post_bytecount_x_", PREPOST_WITH_ARG;
+    "_Post_z_count_", PREPOST_WITH_ARG;
+    "_Post_z_bytecount_", PREPOST_WITH_ARG;
+    "_Post_z_count_c_", PREPOST_WITH_ARG;
+    "_Post_z_bytecount_c_", PREPOST_WITH_ARG;
+    "_Post_z_count_x_", PREPOST_WITH_ARG;
+    "_Post_z_bytecount_x_", PREPOST_WITH_ARG;
+    "_Post_satisfies_impl_", PREPOST_WITH_ARG;
+    "_Post_satisfies_impl_", PREPOST_WITH_ARG;
+    "_Post_satisfies_impl_", PREPOST_WITH_ARG;
+    "_Deref_pre_cap_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_cap_", PREPOST_WITH_ARG;
+    "_Deref_pre_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_pre_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_z_cap_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_z_cap_", PREPOST_WITH_ARG;
+    "_Deref_pre_z_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_z_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_pre_z_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_z_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_z_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_z_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_z_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_z_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_z_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_z_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_valid_cap_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_valid_cap_", PREPOST_WITH_ARG;
+    "_Deref_pre_valid_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_valid_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_pre_valid_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_valid_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_valid_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_valid_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_valid_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_valid_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_valid_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_valid_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_count_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_count_", PREPOST_WITH_ARG;
+    "_Deref_pre_bytecount_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_bytecount_", PREPOST_WITH_ARG;
+    "_Deref_pre_count_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_count_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_bytecount_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_bytecount_c_", PREPOST_WITH_ARG;
+    "_Deref_pre_count_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_count_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_bytecount_x_", PREPOST_WITH_ARG;
+    "_Deref_pre_opt_bytecount_x_", PREPOST_WITH_ARG;
+    "_Deref_post_cap_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_cap_", PREPOST_WITH_ARG;
+    "_Deref_post_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_post_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_z_cap_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_z_cap_", PREPOST_WITH_ARG;
+    "_Deref_post_z_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_z_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_post_z_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_z_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_z_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_z_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_z_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_z_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_z_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_z_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_valid_cap_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_valid_cap_", PREPOST_WITH_ARG;
+    "_Deref_post_valid_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_valid_bytecap_", PREPOST_WITH_ARG;
+    "_Deref_post_valid_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_valid_cap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_valid_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_valid_bytecap_c_", PREPOST_WITH_ARG;
+    "_Deref_post_valid_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_valid_cap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_valid_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_valid_bytecap_x_", PREPOST_WITH_ARG;
+    "_Deref_post_count_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_count_", PREPOST_WITH_ARG;
+    "_Deref_post_bytecount_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_bytecount_", PREPOST_WITH_ARG;
+    "_Deref_post_count_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_count_c_", PREPOST_WITH_ARG;
+    "_Deref_post_bytecount_c_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_bytecount_c_", PREPOST_WITH_ARG;
+    "_Deref_post_count_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_count_x_", PREPOST_WITH_ARG;
+    "_Deref_post_bytecount_x_", PREPOST_WITH_ARG;
+    "_Deref_post_opt_bytecount_x_", PREPOST_WITH_ARG;
+
+    // Struct annotations.
+    // https://docs.microsoft.com/en-us/visualstudio/code-quality/annotating-structs-and-classes?view=vs-2019
+    //"_Field_range_", F_IGNORE_WITH_ARG; // Let's trim out during parsing.
+    "_Field_z_", F_IGNORE;
+    "_Field_size_", F_COUNT_BUFFER;
+    "_Field_size_opt_", F_COUNT_BUFFER;
+    "_Field_size_part_", F_COUNT_BUFFER;
+    "_Field_size_part_opt_", F_COUNT_BUFFER;
+    "_Field_size_full_", F_COUNT_BUFFER;
+    "_Field_size_full_opt_", F_COUNT_BUFFER;
+
+    "_Field_size_bytes_", F_BYTE_BUFFER;
+    "_Field_size_bytes_opt_", F_BYTE_BUFFER;
+    "_Field_size_bytes_part_", F_BYTE_BUFFER;
+    "_Field_size_bytes_part_opt_", F_BYTE_BUFFER;
+    "_Field_size_bytes_full_", F_BYTE_BUFFER;
+    "_Field_size_bytes_full_opt_", F_BYTE_BUFFER;
+
+    // Field attributes.
+    // https://docs.microsoft.com/en-us/windows/win32/midl/struct
+    "string", FATTR_IGNORE;
+    "unique", FATTR_IGNORE;
+    "first_is", FATTR_IGNORE_WITH_ARG;
+    "last_is", FATTR_IGNORE_WITH_ARG;
+    "range", FATTR_IGNORE_WITH_ARG;
+    "length_is", FATTR_IGNORE_WITH_ARG;
+    "size_is", FATTR_COUNT_BUFFER;
+    "max_is", FATTR_COUNT_BUFFER; // XXX. Off-by-one error.
+
+    // Struct attributes.
+    // https://docs.microsoft.com/en-us/windows/win32/midl/hidden
+    "hidden", SATTR_IGNORE;
+
+    // Other annotations.
+
+    "_NULL_", ISNULL;
+    "_Notnull_", ISNULL;
+    "_Maybenull_", ISNULL;
+    "IN", DEPREC_IN;
+    "OUT", DEPREC_OUT;
+    "_NullNull_terminated_", NULLTERM;
+    "_Null_terminated_", NULLTERM;
+    "_Printf_format_string_", FORMAT;
+    "_IRQL_requires_same_", IRQL;
+    "_IRQL_requires_max_", IRQL_WITH_ARG;
+    "__RPC_unique_pointer", RPC_UNIQUE;
+    "__RPC_string", RPC_STRING;
+    "__drv_aliasesMem", DRV;
+    "__drv_freesMem", DRV_WITH_ARG;
+    "__drv_allocatesMem", DRV_WITH_ARG;
+    "_Frees_ptr_", FREE;
+    "_Frees_ptr_opt_", FREE;
+    "__callback", CALLBACK;
+    "_Reserved_", RESERVED;
+    "OPTIONAL", OPTIONAL;
+    "PROPSHEETPAGEA_V1_FIELDS", F_IGNORE;
+    "PROPSHEETPAGEW_V1_FIELDS", F_IGNORE;
+
+
+    // Other tokens.
+
+    "const", CONST;
+    "CONST", CONST;
+    "volatile", VOLATILE;
+    "unsigned", SIGNEDNESS;
+    "signed", SIGNEDNESS;
+    "UNALIGNED", UNALIGNED;
+    "NEAR", NEAR;
+    "__RPC_NEAR", NEAR;
+    "FAR", FAR;
+    "__RPC_FAR", FAR;
+    "POINTER_64", PTR;
+    "RESTRICTED_POINTER", PTR;
+    "sizeof", SIZEOF;
+    "typedef", TYPEDEF;
+    "interface", INTERFACE;
+    "v1_enum", V1ENUM;
+    "struct", STRUC;
+    "enum", ENUM;
+    "union", UNION;
+
+    // Function pointer tokens.
+    "CALLBACK", CALLBACK2;
+    "WINAPI", WINAPI;
+    "NTAPI", NTAPI;
+    "APIENTRY", APIENTRY;
+    "__cdecl", CDECL;
+    "__CRTDECL", CRTDECL;
+    "__stdcall", STDCALL;
+
+    // Declspec token.
+    "DECLSPEC_NOINITALL", DECLSPEC;
+
+    // More ignorable annotation
+    "_Strict_type_match_", MATCH
+  |] |> Map.ofArray
+
+let lexeme = LexBuffer<_>.LexemeString
+
+let newline (lexbuf: LexBuffer<_>) =
+  lexbuf.StartPos <- lexbuf.StartPos.NextLine
+
+}
+
+// Auxiliary regular expressions.
+let alphabet = ['a'-'z' 'A'-'Z']
+let digit = ['0'-'9']
+let hexadigit = ['0'-'9' 'a'-'f' 'A'-'F']
+let startchar = alphabet | '_'
+let trailchar = alphabet | digit | '_'
+let dot = '.'
+let marker = '%'
+let squote = '\''
+let dquote = '"'
+
+// Rule entry regular expressions.
+let whitespace  = [' ' '\t']
+let newline = "\n\r" | '\n' | '\r'
+let decimals = digit+
+let hexadecimals = ("0x"|"0X")(hexadigit)+
+let integer = decimals | hexadecimals
+let special = ['_' '*' '?' '!' '%' ] // Actually more.
+let letter = alphabet | digit | whitespace | special
+let char = squote(letter)squote
+let string = dquote(letter)*dquote
+let id = startchar(trailchar)*((dot)(trailchar)*)?(marker)?
+
+// Rules
+rule tokenize = parse
+| whitespace    { tokenize lexbuf }
+| newline       { newline lexbuf; tokenize lexbuf }
+| integer       { INTEGER (int (lexeme lexbuf)) }
+| char          { let s = lexeme lexbuf
+                  CHAR (s.[1]) }
+| string        { STRING (lexeme lexbuf) }
+| id            { match keywords.TryFind(lexeme lexbuf) with
+                  | Some keyword -> keyword
+                  | None -> ID (lexeme lexbuf) }
+| '('           { LPAREN }
+| ')'           { RPAREN }
+| '{'           { LBRACE }
+| '}'           { RBRACE }
+| '['           { LBRACKET }
+| ']'           { RBRACKET }
+| ','           { COMMA }
+| '*'           { ASTERISK }
+| "..."         { THREEDOTS }
+| '+'           { PLUS }
+| '-'           { MINUS }
+| '&'           { AND }
+| '~'           { NEG }
+| "<<"          { LSHIFT }
+| ">>"          { RSHIFT }
+| '?'           { QUESTION }
+| '>'           { CMP }
+| '<'           { CMP }
+| ">="          { CMP }
+| "<="          { CMP }
+| ':'           { COLON }
+| ';'           { SEMICOLON }
+| '='           { ASSIGN }
+| eof           { EOF }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>B2R2.MiddleEnd</name></assembly>
+<members>
+<member name="P:B2R2.MiddleEnd.BinEssence.SCFG">
+<summary>
+ Super Control Flow Graph.
+</summary>
+</member>
+<member name="P:B2R2.MiddleEnd.BinEssence.Apparatus">
+<summary>
+ The apparatus holds crucial machinery about binary code and their lifted
+ statements. For example, it provides a convenient mapping from an address
+ to the corresponding instruction and IR statements.
+</summary>
+</member>
+<member name="P:B2R2.MiddleEnd.BinEssence.BinHandler">
+<summary>
+ BInary handler.
+</summary>
+</member>
+<member name="T:B2R2.MiddleEnd.BinEssence">
+<summary>
+ Represent the &quot;essence&quot; of a binary code. This is the primary data structure
+ for storing various information about a binary, such as its CFG, FileFormat
+ information, etc.
+</summary>
+</member>
+</members>
+</doc>

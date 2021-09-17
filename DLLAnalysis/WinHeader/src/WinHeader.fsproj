@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Utils.fs" />
+    <Compile Include="Constants.fs" />
+    <Compile Include="Ctags.fs" />
+    <Compile Include="ExtractFunction.fs" />
+    <Compile Include="ExtractType.fs" />
+    <Compile Include="CAnnot.fs" />
+    <Compile Include="CType.fs" />
+    <Compile Include="CFunction.fs" />
+    <FsYacc Include="CParser.fsy">
+          <OtherFlags>--module WinHeader.CParser</OtherFlags>
+    </FsYacc>
+    <FsLex Include="CLexer.fsl">
+          <OtherFlags>--unicode</OtherFlags>
+    </FsLex>
+    <Compile Include="CParser.fs" />
+    <Compile Include="CLexer.fs" />
+    <Compile Include="CPrimitives.fs" />
+    <Compile Include="FindCType.fs" />
+    <Compile Include="FindCFunction.fs" />
+    <Compile Include="TypeHelper.fs" />
+    <Compile Include="SizeSpec.fs" />
+    <Compile Include="ArgType.fs" />
+    <Compile Include="FuncType.fs" />
+    <Compile Include="APIMap.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Argu" Version="5.5.0" />
+    <PackageReference Include="FSharp.Data" Version="3.3.2" />
+    <PackageReference Include="FsLexYacc" Version="10.0.0" />
+    <PackageReference Include="Microsoft.NETCore.Portable.Compatibility" Version="1.0.2" />
+  </ItemGroup>
+
+</Project>

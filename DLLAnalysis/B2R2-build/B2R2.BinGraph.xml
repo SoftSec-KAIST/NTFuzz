@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>B2R2.BinGraph</name></assembly>
+<members>
+<member name="F:B2R2.BinGraph.DiGraph`2.Exits@">
+<summary>
+ A list of exit nodes, which do not have any successors.
+</summary>
+</member>
+<member name="F:B2R2.BinGraph.DiGraph`2.Unreachables@">
+<summary>
+ A list of unreachable nodes. We always add nodes into this list first, and
+ then later remove it from the list when adding edges.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.DiGraph`2.Unreachables">
+<summary>
+ A list of unreachable nodes. We always add nodes into this list first, and
+ then later remove it from the list when adding edges.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.DiGraph`2.Exits">
+<summary>
+ A list of exit nodes, which do not have any successors.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.TryFindVertexByID(System.Int32)">
+<summary>
+ Find a vertex by its VertexID. This function returns an Option type.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.TryFindVertexByData(`0)">
+<summary>
+ Find a vertex that has the given VertexData from the graph. This function
+ does not raise an exception unlike FindVertexByData.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.TryFindVertexBy(Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},System.Boolean})">
+<summary>
+ Find a vertex by the given function without raising an exception.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.ToDOTStr(System.String,Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},System.String},Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Edge{`1},System.String})">
+<summary>
+ Return the DOT-representation of this graph.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.Size">
+<summary>
+ Number of vertices.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.Reverse">
+<summary>
+ Return a new transposed (i.e., reversed) graph.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.RemoveVertex(B2R2.BinGraph.Vertex{`0})">
+<summary>
+ Remove the given vertex from the graph.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.RemoveEdge(B2R2.BinGraph.Vertex{`0},B2R2.BinGraph.Vertex{`0})">
+<summary>
+ Remove the edge that spans from src to dst.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.IterVertex(Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},Microsoft.FSharp.Core.Unit})">
+<summary>
+ Iterate every vertex (the order can be arbitrary).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.IterEdge(Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},Microsoft.FSharp.Core.FSharpFunc{`1,Microsoft.FSharp.Core.Unit}}})">
+<summary>
+ Fold every edge in the graph (the order can be arbitrary).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.IsEmpty">
+<summary>
+ Is this empty? A graph is empty when there is no vertex in the graph.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.GetVertices">
+<summary>
+ Get a set of all vertices in the graph.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.FoldVertex``1(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},``0}},``0)">
+<summary>
+ Fold every vertex (the order can be arbitrary).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.FoldEdge``1(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},Microsoft.FSharp.Core.FSharpFunc{`1,``0}}}},``0)">
+<summary>
+ Fold every edge in the graph (the order can be arbitrary).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.FindVertexByID(System.Int32)">
+<summary>
+ Find a vertex by its VertexID. This function raises an exception when
+ there is no such a vertex.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.FindVertexByData(`0)">
+<summary>
+ Find a vertex that has the given VertexData from the graph. It will raise
+ an exception if such a vertex does not exist. Note that this function can
+ be used only when each vertex always has unique VertexData.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.FindVertexBy(Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{`0},System.Boolean})">
+<summary>
+ Find a vertex by the given function. This function returns the first
+ element, in which the function returns true. When there is no such an
+ element, the function raises an exception.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.FindEdgeData(B2R2.BinGraph.Vertex{`0},B2R2.BinGraph.Vertex{`0})">
+<summary>
+ Find the data of the edge that spans from src to dst.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.Exists(B2R2.BinGraph.Vertex{`0})">
+<summary>
+ Check the existence of the given vertex from the graph.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.AddVertex(`0)">
+<summary>
+ Add a vertex into the graph, and return a reference to the added vertex.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DiGraph`2.AddEdge(B2R2.BinGraph.Vertex{`0},B2R2.BinGraph.Vertex{`0},`1)">
+<summary>
+ Add an edge from src to dst.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DiGraph`2">
+<summary>
+ A directed graph.
+ Disclaimer: Our graph implementation is imperative.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.Edge`1">
+<summary>
+ An edge in a directed graph.
+</summary>
+</member>
+<member name="F:B2R2.BinGraph.Vertex`1.Succs@">
+<summary>
+ List of successors.
+</summary>
+</member>
+<member name="F:B2R2.BinGraph.Vertex`1.Preds@">
+<summary>
+ List of predecessors.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Vertex`1.Succs(Microsoft.FSharp.Collections.FSharpList{B2R2.BinGraph.Vertex{`0}})">
+<summary>
+ List of successors.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Vertex`1.Preds(Microsoft.FSharp.Collections.FSharpList{B2R2.BinGraph.Vertex{`0}})">
+<summary>
+ List of predecessors.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Vertex`1.Succs">
+<summary>
+ List of successors.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Vertex`1.Preds">
+<summary>
+ List of predecessors.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Vertex`1.IsDummy">
+<summary>
+ Check whether vertex is dummy node.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Vertex`1.GetID``1(B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Return the ID of the given vertex.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Vertex`1.GetID">
+<summary>
+ We sometimes need to access ID of dummy vertex for example calculating
+ dominators.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.Vertex`1">
+<summary>
+ A vertex in a directed graph. The vertex data (v) is optional, and if it is
+ None, we will consider the vertex as a dummy node. Dummy nodes are useful
+ for representing entry/exit node in a CFG.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.EdgeID">
+<summary>
+ Edge ID is a tuple of two node IDs (source node ID, destination node ID).
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.VertexData">
+<summary>
+ A data type for vertex. A VertexData should have an ID.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.VertexID">
+<summary>
+ A unique ID for a vertex.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.DummyEntry.Connect``1(B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Temporarily connect entry dummy node with the given root node. We do not
+ touch the Graph, but simply connect two vertices temporarily for the
+ convenience of analysis.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.UnknownEdge">
+<summary>
+ Unknown edge type. This should be an error case.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.ImplicitCallEdge">
+<summary>
+ An implicit edge that is not explicitly visible from the current CALL
+ instruction, but visible within the function. If there is a path in the
+ callee that calls a function, then we create an implicit edge from a
+ caller to any of the callees.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.CallFallThroughEdge">
+<summary>
+ A fall-through after a call instruction. This is indeed a pseudo edge as
+ there&apos;s no direct control flow from a call instruction to its
+ fall-through.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.FallThroughEdge">
+<summary>
+ A simple fall-through case. This type is created when an edge cuts in two
+ consecutive instructions.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.RetEdge">
+<summary>
+ An edge of a function return.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.ExternalCallEdge">
+<summary>
+ An edge of a call instruction to an external function or PLT.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.ExternalJmpEdge">
+<summary>
+ An edge of a jmp instruction to an external function or PLT.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.IndirectCallEdge">
+<summary>
+ An edge from an indirect call instruction.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.IndirectJmpEdge">
+<summary>
+ An edge from an indirect jmp instruction.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.RecursiveCallEdge">
+<summary>
+ An edge of a recursive call instruction.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.CallEdge">
+<summary>
+ An edge of a regular call instruction.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.IntraCJmpFalseEdge">
+<summary>
+ A false conditional edge only visible from an IR-level CFG, because there
+ is a control-flow inside a machine instruction.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.IntraCJmpTrueEdge">
+<summary>
+ A true conditional edge only visible from an IR-level CFG, because there
+ is a control-flow inside a machine instruction.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.IntraJmpEdge">
+<summary>
+ A direct jump edge only visible from an IR-level CFG, because there is a
+ control-flow inside a machine instruction.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.InterCJmpFalseEdge">
+<summary>
+ An edge of a conditional jump that is exercised when the condition is
+ false.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.InterCJmpTrueEdge">
+<summary>
+ An edge of a conditional jump that is exercised when the condition is
+ true.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind.InterJmpEdge">
+<summary>
+ An edge of a direct jump, e.g., JMP +0x42.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CFGEdgeKind">
+<summary>
+ We distinguish edges of a CFG by classifying them into several kinds.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.VisualBlock">
+<summary>
+ A visual representation of a basic block.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.VisualLine">
+<summary>
+ A visual line of a basic block.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.BasicBlock.Range">
+<summary>
+ The instruction address range of the basic block.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.BasicBlock.PPoint">
+<summary>
+ The start position (ProgramPoint) of the basic block.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.BasicBlock.ToVisualBlock">
+<summary>
+ Convert this basic block to a visual representation.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.BasicBlock.IsFakeBlock">
+<summary>
+ Check if this is a fake basic block inserted by our analysis. We create a
+ fake block to represent call target vertices in a function-level CFG.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.BasicBlock">
+<summary>
+ The base type for basic block.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.RangedDiGraph`2.FindVertexByRange(B2R2.AddrRange)">
+<summary>
+ Find a vertex by AddrRange.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.RangedDiGraph`2.Clone(Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Clone this graph and return a new one. The new graph will have vertices
+ with newly assigned IDs. The reverse parameter tells whether the graph
+ is constructed with transposed (reversed) edges or not. If the parameter
+ is not given, this function will simply return the same graph by default.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.RangedDiGraph`2">
+<summary>
+ A directed graph where each vertex can be identified by a range of
+ addresses. This graph allows accessing a vertex containing a given address.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.RangedVertexData">
+<summary>
+ Vertex data that always contain AddrRange.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.IRBasicBlock.Range">
+<summary>
+ The address range of the basic block. Even if the block contains a partial
+ IR statements of an instruction, we include the instruction to compute the
+ range.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.IRBasicBlock.PPoint">
+<summary>
+ The position of the basic block.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.IRBasicBlock.LastInstruction">
+<summary>
+ The last instruction of the basic block.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.IRBasicBlock.FirstInstruction">
+<summary>
+ The first instruction of the basic block.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.IRBasicBlock.GetLastStmt">
+<summary>
+ Get the last IR statement of the bblock.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.IRBasicBlock.GetInstructions">
+<summary>
+ Get an array of instructions that corresponds to each statement in the
+ IRStatements.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.IRBasicBlock.GetInsInfos">
+<summary>
+ Get the array of InstructionInfo of the basic block.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.IRBasicBlock.GetIRStatements">
+<summary>
+ Get an array of IR statements of a basic block.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.IRBasicBlock">
+<summary>
+ A basic block that consists of IR (LowUIR) statements. It contains all the
+ InstructionInfo of the basic block.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.IRCFG">
+<summary>
+ The main construct of any kind of CFG. We always build an IR-based CFG
+ first, and then convert it into another type of CFG, such as SSA and
+ disassembly-based CFG.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.ControlFlowGraph`2.TryFindEdge(B2R2.BinGraph.Vertex{`0},B2R2.BinGraph.Vertex{`0})">
+<summary>
+ Try to find an edge from src to dst.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.ControlFlowGraph`2.Clone(Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Clone this graph and return a new one. Copied vertices will have the same
+ IDs assigned. The reverse parameter tells whether the graph is constructed
+ with transposed (reversed) edges or not. If the parameter is not given,
+ this function will simply return the same graph by default.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.ControlFlowGraph`2">
+<summary>
+ A simple directed graph, which represents any kinds of control-flow graphs
+ (including call graphs). Vertex Data should support equality operation in
+ order to support FindVertexByData method. Any graph that inherits from this
+ class operates with our visualizer.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.SCFG.Vertices">
+<summary>
+ A mapping from the start address of a basic block to the vertex in the
+ SCFG.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.SCFG.Graph">
+<summary>
+ The actual graph data structure of the SCFG.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.SCFG.Boundaries">
+<summary>
+ The set of boundaries (intervals) of the basic blocks.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SCFG.GetVertex(System.UInt64)">
+<summary>
+ Return a vertex located at the given address.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SCFG.GetFunctionCFG(System.UInt64)">
+<summary>
+ Retrieve an IR-based CFG (subgraph) of a function starting at the given
+ address (addr) from the SCFG, and the root node.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SCFG.FindVertex(System.UInt64)">
+<summary>
+ Find a basic block (vertex) in the SCFG that the given address belongs to.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SCFG.FindFunctionVertex(System.UInt64)">
+<summary>
+ For a given address, find the first vertex of a function that the address
+ belongs to.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SCFG.FindFunctionEntryByName(System.String)">
+<summary>
+ For a given function name, find the corresponding function address if
+ exists.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SCFG.FindFunctionEntry(System.UInt64)">
+<summary>
+ For a given address, find the address of a function that the address
+ belongs to.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SCFG.CallTargets">
+<summary>
+ Retrieve call target addresses.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.SCFG">
+<summary>
+ Super Control Flow Graph (SCFG) of a program. We use LowUIR to construct a
+ SCFG, and it is important to note that LowUIR-level CFG is more specific
+ than the one from disassembly. That is, a single machine instruction (thus,
+ a single basic block) may correspond to multiple basic blocks in the
+ LowUIR-level CFG.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.ILens`1.Filter(B2R2.BinGraph.ControlFlowGraph{B2R2.BinGraph.IRBasicBlock,B2R2.BinGraph.CFGEdgeKind},Microsoft.FSharp.Collections.FSharpList{B2R2.BinGraph.Vertex{B2R2.BinGraph.IRBasicBlock}},B2R2.BinCorpus.Apparatus)">
+ <summary>
+ The main function of the ILens interface, which will essentially convert a
+ given CFG into another graph.
+ </summary>
+ <param name="graph">The given CFG.</param>
+ <param name="root">The list of root nodes of the CFG.</param>
+ <returns>
+ A converted graph along with its root node.
+ </returns>
+</member>
+<member name="T:B2R2.BinGraph.ILens`1">
+<summary>
+ The Lens interface, which is a converter from a graph to another graph. In
+ B2R2, An IR-level SCFG forms the basis, and we should apply different lenses
+ to obtain different graphs. For example, we can get disassembly-based CFG by
+ applying DisasmLens to the SCFG.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DisasmLens">
+<summary>
+ A graph lens for obtaining DisasmCFG.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DisasmVMap">
+<summary>
+ A mapping from an address to a DisasmCFG vertex.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DisasmCFG">
+<summary>
+ Disassembly-based CFG, where each node contains disassembly code.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DisasmBBlock">
+<summary>
+ Basic block type for a disassembly-based CFG (DisasmCFG).
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.SSABBlock">
+<summary>
+ Basic block type for an SSA-based CFG (SSACFG).
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.IDStack">
+<summary>
+ Variable ID stack.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.VarCountMap">
+<summary>
+ Counter for each variable.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DefsPerNode">
+<summary>
+ Defined variables per node in a SSACFG.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DefSites">
+<summary>
+ Mapping from a variable to a set of defining SSA basic blocks.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.FakeVMap">
+<summary>
+ This is a mapping from an edge to a dummy vertex (for external function
+ calls). We first separately create dummy vertices even if they are
+ associated with the same node (address) in order to compute dominance
+ relationships without introducing incorrect paths or cycles. For
+ convenience, we will always consider as a key &quot;a return edge&quot; from a fake
+ vertex to a fall-through vertex.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.SSAVMap">
+<summary>
+ A mapping from an address to a SSACFG vertex.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.SSACFG">
+<summary>
+ Disassembly-based CFG, where each node contains disassembly code.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.SSALens">
+<summary>
+ A graph lens for obtaining SSACFG.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CallGraphLens">
+<summary>
+ A graph lens for obtaining CallGraph.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CallVMap">
+<summary>
+ A mapping from an address to a CallCFG vertex.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CallCFG">
+<summary>
+ Call graph, where each node represents a function.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.CallGraphBBlock">
+<summary>
+ Basic block type for a call graph (CallCFG).
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.IPostAnalysis">
+<summary>
+ CFG analysis that we perform after constructing the basic SCFG. Post
+ analysis includes no-return analysis, libc start address analysis,
+ switch-case analysis, etc.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.DummyDataAccessException">
+<summary>
+ Trying to access dummy node&apos;s data
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.EdgeNotFoundException">
+<summary>
+ Missing edge.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.MultipleVerticesFoundException">
+<summary>
+ Multiple vertices found when looking for a vertex containing certain data
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.VertexNotFoundException">
+<summary>
+ Missing vertex.
+</summary>
+</member>
+<member name="T:B2R2.BinGraph.InvalidFunctionAddressException">
+<summary>
+ Raised when the given address is not a start address of a function.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Traversal.foldTopologically``3(B2R2.BinGraph.DiGraph{``0,``1},Microsoft.FSharp.Collections.FSharpList{B2R2.BinGraph.Vertex{``0}},Microsoft.FSharp.Core.FSharpFunc{``2,Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{``0},``2}},``2)">
+<summary>
+ Topologically fold every vertex of the given graph. For every unreachable
+ nodes, we accumulate vertices reachable from the node in a postorder
+ fashion. The accumulated list becomes the reverse postordered vertices,
+ which is essentially the same as a topologically sorted list of vertices.
+ We then simply fold the accumulated list. The second parameter (root) is for
+ providing root vertices in case there is no unreachable node, e.g., when
+ there is a loop to the root node.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Traversal.iterRevPostorder``1(B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.Unit})">
+<summary>
+ Iterate vertices of the graph in a depth-first manner with the reverse
+ postorder traversal.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Traversal.foldRevPostorder``2(B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{``0},``1}},``1)">
+<summary>
+ Fold vertices of the graph in a depth-first manner with the reverse
+ postorder traversal.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Traversal.iterPostorder``1(B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.Unit})">
+<summary>
+ Iterate vertices of the graph in a depth-first manner with the postorder
+ traversal.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Traversal.foldPostorder``2(B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{``0},``1}},``1)">
+<summary>
+ Fold vertices of the graph in a depth-first manner with the postorder
+ traversal.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Traversal.iterPreorder``1(B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.Unit})">
+<summary>
+ Iterate vertices of the graph in a depth-first manner with the preorder
+ traversal.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Traversal.foldPreorder``2(B2R2.BinGraph.Vertex{``0},Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{B2R2.BinGraph.Vertex{``0},``1}},``1)">
+<summary>
+ Fold vertices of the graph in a depth-first manner with the preorder
+ traversal.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.MaxLength">
+<summary>
+ Length of the arrays.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.IDom">
+<summary>
+ DFNum -&gt; DFNum of an immediate dominator.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Size">
+<summary>
+ DFNum -&gt; Size
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Bucket">
+<summary>
+ DFNum -&gt; set of DFNums (vertices that share the same sdom).
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Semi">
+<summary>
+ DFNum -&gt; DFNum of a semidominator.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Ancestor">
+<summary>
+ DFNum -&gt; DFNum of an ancestor.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Child">
+<summary>
+ DFNum -&gt; DFNum of the child node (zero if not exists).
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Parent">
+<summary>
+ DFNum -&gt; DFNum of the parent node (zero if not exists).
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Label">
+<summary>
+ DFNum -&gt; DFNum in the ancestor chain s.t. DFNum of its Semi is minimal.
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.Vertex">
+<summary>
+ DFNum -&gt; Vertex
+</summary>
+</member>
+<member name="P:B2R2.BinGraph.Dominator.DomInfo`1.DFNumMap">
+<summary>
+ Vertex ID -&gt; DFNum
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Dominator.dominatorTree``2(B2R2.BinGraph.Dominator.DominatorContext{``0,``1})">
+<summary>
+ Return the dominator tree and its root of the graph
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Dominator.frontier``2(B2R2.BinGraph.Dominator.DominatorContext{``0,``1},B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Return the dominance frontier of a given node (v) in the graph (g).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Dominator.pdoms``2(B2R2.BinGraph.Dominator.DominatorContext{``0,``1},B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Return a list of post-dominators of the given node (v) in the graph (g).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Dominator.doms``2(B2R2.BinGraph.Dominator.DominatorContext{``0,``1},B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Return a list of dominators of the given node (v) in the graph (g).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Dominator.ipdom``2(B2R2.BinGraph.Dominator.DominatorContext{``0,``1},B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Return immediate post-dominator of the given node (v) in the graph (g).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Dominator.idom``2(B2R2.BinGraph.Dominator.DominatorContext{``0,``1},B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Return immediate dominator of the given node (v) in the graph (g).
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.Dominator.initDominatorContext``2(B2R2.BinGraph.DiGraph{``0,``1},B2R2.BinGraph.Vertex{``0})">
+<summary>
+ Initialize dominator context for a given graph (g) and the root node of g.
+</summary>
+</member>
+<member name="M:B2R2.BinGraph.SSABlockHelper.computeDefinedVars(B2R2.FrontEnd.BinHandler,B2R2.BinGraph.SCFG,System.UInt64)">
+<summary>
+ This is currently intra-procedural.
+</summary>
+</member>
+</members>
+</doc>

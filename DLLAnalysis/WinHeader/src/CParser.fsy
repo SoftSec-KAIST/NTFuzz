@@ -1,0 +1,503 @@
+%{
+
+open WinHeader.C
+
+let head = List.head
+
+let addSize size1 size2 =
+  match size1, size2 with
+  | sz, Const 0 | Const 0, sz -> sz
+  | Const c1, Const c2 -> Const (c1 + c2)
+  | _ -> Plus (size1, size2)
+
+let multiplySize size1 size2 =
+  match size1, size2 with
+  | sz, Const 1 | Const 1, sz -> sz
+  | Const c1, Const c2 -> Const (c1 * c2)
+  | _ -> Times (size1, size2)
+
+%}
+
+// Special characters.
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
+%token COMMA ASTERISK THREEDOTS
+%token PLUS MINUS LSHIFT RSHIFT AND NEG QUESTION CMP COLON SEMICOLON ASSIGN
+%token EOF
+
+// Annotation clause.
+%token INEXPRESSIBLE
+
+// Annotation for arguments.
+%token IN OUT INOUT IN_WITH_ARG OUT_WITH_ARG INOUT_WITH_ARG
+
+%token IN_BYTE_BUFFER IN_COUNT_BUFFER
+%token OUT_BYTE_BUFFER OUT_COUNT_BUFFER
+%token INOUT_BYTE_BUFFER INOUT_COUNT_BUFFER
+
+%token IN_BYTE_BUFFER_PTR IN_COUNT_BUFFER_PTR
+%token OUT_BYTE_BUFFER_PTR OUT_COUNT_BUFFER_PTR
+%token INOUT_BYTE_BUFFER_PTR INOUT_COUNT_BUFFER_PTR
+
+%token AUX_BYTE_BUFFER AUX_COUNT_BUFFER
+%token PREPOST PREPOST_WITH_ARG
+%token MATCH
+
+// Annotation for fields. Discriminate tokens to avoid rule conflict.
+%token F_IGNORE F_IGNORE_WITH_ARG
+%token F_BYTE_BUFFER F_COUNT_BUFFER
+
+// Attributes for fields. Discriminate tokens to avoid rule conflict.
+%token FATTR_IGNORE FATTR_IGNORE_WITH_ARG
+%token FATTR_COUNT_BUFFER
+
+// Attributes for struct. Discriminate tokens to avoid rule conflict.
+%token SATTR_IGNORE SATTR_IGNORE_WITH_ARG
+
+// Other annotations.
+%token ISNULL
+%token DEPREC_IN DEPREC_OUT
+%token NULLTERM
+%token FORMAT
+%token IRQL IRQL_WITH_ARG
+%token DRV DRV_WITH_ARG
+%token RPC_UNIQUE RPC_STRING
+%token FREE
+%token CALLBACK
+%token RESERVED
+%token OPTIONAL
+
+// Other C tokens.
+%token CONST
+%token VOLATILE
+%token SIGNEDNESS
+%token UNALIGNED
+%token NEAR FAR
+%token PTR
+%token SIZEOF
+%token TYPEDEF
+%token INTERFACE
+%token V1ENUM
+%token STRUC
+%token ENUM
+%token UNION
+
+// Function pointer indicators.
+%token CALLBACK2 WINAPI NTAPI APIENTRY CDECL CRTDECL STDCALL
+
+// Token for other declspec to ignore.
+%token DECLSPEC
+
+%token <int> INTEGER
+%token <char> CHAR
+%token <string> STRING // Constant string with double quote.
+%token <string> ID
+
+// Entries.
+%start funcdecl
+%start typedecl
+
+%type <CFunction> funcdecl
+%type <Typedef> typedecl
+
+%%
+
+///////////////////// Function declaration /////////////////////////
+
+funcdecl: args EOF { { Args = $1 } }
+
+args:
+  |                 { [] }
+  | THREEDOTS       { [] }
+  | arg             { [$1] }
+  | arg COMMA args  { $1 :: $3 }
+
+arg: inoutAnnot matchAnnot drv free prepost isnull prepost aux
+      deprec nullterm format callback reserved
+      constant volatile signedness struc ID
+      nearFar constant alignedness asterisks
+      idOpt bracket optional
+      {
+        let sizeAnnot, ioAnnot = $1
+        { MainSizeAnnot = sizeAnnot
+          AuxSizeAnnot = $8
+          IOAnnot = ioAnnot
+          TypeName = $18
+          AstrCount = $22 + (if $24 then 1 else 0) // Array indicates pointer.
+          ArgName = $23 }
+      }
+
+matchAnnot:
+  |               { }
+  |  MATCH { }
+
+inoutAnnot:
+  |                                       { NoSizeAnnot, NoIOAnnot }
+  | IN                                    { NoSizeAnnot, InArg }
+  | OUT                                   { NoSizeAnnot, OutArg }
+  | INOUT                                 { NoSizeAnnot, InOutArg }
+  | IN_WITH_ARG LPAREN exprs RPAREN       { NoSizeAnnot, InArg }
+  | OUT_WITH_ARG LPAREN exprs RPAREN      { NoSizeAnnot, OutArg}
+  | INOUT_WITH_ARG LPAREN exprs RPAREN    { NoSizeAnnot, InOutArg }
+  | IN_BYTE_BUFFER LPAREN exprs RPAREN
+    { ByteBuffer (SinglePtr, head $3), InArg }
+  | OUT_BYTE_BUFFER LPAREN exprs RPAREN
+    { ByteBuffer (SinglePtr, head $3), OutArg }
+  | INOUT_BYTE_BUFFER LPAREN exprs RPAREN
+    { ByteBuffer (SinglePtr, head $3), InOutArg }
+  | IN_COUNT_BUFFER LPAREN exprs RPAREN
+    { CountBuffer (SinglePtr, head $3), InArg }
+  | OUT_COUNT_BUFFER LPAREN exprs RPAREN
+    { CountBuffer (SinglePtr, head $3), OutArg }
+  | INOUT_COUNT_BUFFER LPAREN exprs RPAREN
+    { CountBuffer (SinglePtr, head $3), InOutArg }
+  | IN_BYTE_BUFFER_PTR LPAREN exprs RPAREN
+    { ByteBuffer (DoublePtr, head $3), InArg }
+  | OUT_BYTE_BUFFER_PTR LPAREN exprs RPAREN
+    { ByteBuffer (DoublePtr, head $3), OutArg }
+  | INOUT_BYTE_BUFFER_PTR LPAREN exprs RPAREN
+    { ByteBuffer (DoublePtr, head $3), InOutArg }
+  | IN_COUNT_BUFFER_PTR LPAREN exprs RPAREN
+    { CountBuffer (DoublePtr, head $3), InArg }
+  | OUT_COUNT_BUFFER_PTR LPAREN exprs RPAREN
+    { CountBuffer (DoublePtr, head $3), OutArg }
+  | INOUT_COUNT_BUFFER_PTR LPAREN exprs RPAREN
+    { CountBuffer (DoublePtr, head $3), InOutArg }
+
+prepost:
+  |                                               { }
+  | PREPOST prepost                               { }
+  | PREPOST_WITH_ARG LPAREN exprs RPAREN prepost  { }
+
+isnull:
+  |        { }
+  | ISNULL { }
+
+aux:
+  |                                   		{ NoSizeAnnot }
+  | AUX_BYTE_BUFFER LPAREN exprs RPAREN   { ByteBuffer (SinglePtr, head $3) }
+  | AUX_COUNT_BUFFER LPAREN exprs RPAREN  { CountBuffer (SinglePtr, head $3) }
+
+deprec:
+  | { }
+  | DEPREC_IN  deprec   { }
+  | DEPREC_OUT deprec   { }
+
+nullterm:
+  |          { }
+  | NULLTERM { }
+
+format:
+  |        { }
+  | FORMAT { }
+
+irql:
+  |                                     { }
+  | IRQL irql                           { }
+  | IRQL_WITH_ARG LPAREN ID RPAREN irql { }
+
+drv:
+  |                               { }
+  | DRV                           { }
+  | DRV_WITH_ARG LPAREN ID RPAREN { }
+
+rpc_uniq:
+  |            { }
+  | RPC_UNIQUE { }
+
+rpc_str:
+  |            { }
+  | RPC_STRING { }
+
+free:
+  |       { }
+  | FREE  { }
+
+callback:
+  |          { }
+  | CALLBACK { }
+
+reserved:
+  |          { }
+  | RESERVED { }
+
+constant:
+  |       { }
+  | CONST { }
+
+volatile:
+  |          { }
+  | VOLATILE { }
+signedness:
+  |             { }
+  | SIGNEDNESS  { }
+
+struc:
+  |       { }
+  | STRUC { }
+
+nearFar:
+  |       { }
+  | NEAR  { }
+  | FAR   { }
+
+ptr:
+  |     { }
+  | PTR { }
+
+alignedness:
+  |           { }
+  | UNALIGNED { }
+
+asterisks:
+  |                     { 0 }
+  | ASTERISK asterisks  { 1 + $2 }
+
+idOpt:
+  |    { None }
+  | ID { Some $1 }
+
+bracket:
+  |                     { false }
+  | LBRACKET RBRACKET   { true }
+
+optional:
+  |           { }
+  | OPTIONAL  { }
+
+exprs:
+  |                  { [] }
+  | expr             { [$1] }
+  | expr COMMA exprs { $1 :: $3 }
+
+expr:
+  | plusMinusOp { $1 }
+
+// XXX. Let's just care about the first term.
+plusMinusOp:
+  | multOp                    { $1 }
+  | plusMinusOp PLUS multOp   { Plus ($1, $3) }
+  | plusMinusOp MINUS multOp  { Minus ($1, $3) }
+
+multOp:
+  | shiftOp                 { $1 }
+  | multOp ASTERISK shiftOp { Times ($1, $3) }
+
+shiftOp:
+  | andOp               { $1 }
+  | shiftOp LSHIFT andOp { DontKnow }
+  | shiftOp RSHIFT andOp { DontKnow }
+
+andOp:
+  | term           { $1 }
+  | andOp AND term { $1 }
+
+// XXX. Let's pray that ternary operations are always enclosed w/ parenthesis.
+term:
+  | INEXPRESSIBLE                               { DontKnow }
+  | NEG INTEGER                                 { DontKnow }
+  | MINUS INTEGER                               { Const (- $2) }
+  | LPAREN expr RPAREN                          { $2 }
+  | INTEGER                                     { Const $1 }
+  | SIZEOF LPAREN ID RPAREN                     { SizeOf $3 }
+  | ID LPAREN parameters RPAREN                 { DontKnow }
+  | ID                                          { DirectVar $1 }
+  | ASTERISK ID                                 { DerefVar $2 }
+  | LPAREN cond QUESTION expr COLON expr RPAREN { DontKnow }
+
+cond:
+  | ID CMP ID           { }
+  | LPAREN cond RPAREN  { }
+
+parameters:
+  | parameter                   { }
+  | parameter COMMA parameters  { }
+
+parameter: // Just ignore.
+  | CHAR    { }
+  | ID      { }
+  | INTEGER { }
+  // More may come.
+
+///////////////////// Type declaration /////////////////////////
+
+typedecl:
+  | typedef interfc v1enum typeEntity SEMICOLON { $4 }
+
+typedef:
+  |         { }
+  | TYPEDEF { }
+
+interfc:
+  |           { }
+  | INTERFACE { raise InterfaceException }
+
+v1enum:
+  |                          { }
+  | LBRACKET V1ENUM RBRACKET { }
+
+typeEntity:
+  | nullterm irql drv rpc_uniq rpc_str constant signedness fptrOrAlias { $8 }
+  | structAttr STRUC declspec structAlias                              { $4 }
+  | UNION unionAlias                                                   { $2 }
+  | ENUM enumAlias                                                     { $2 }
+
+/// Function pointer declaration rules.
+
+fptrOrAlias:
+  | ID LPAREN nearFar func ASTERISK ID RPAREN LPAREN args RPAREN  // Fptr type.
+    { { Names = [Name $6]; Type = CPtr CFunc } }
+  | ID func ID LPAREN args RPAREN                           // Function itself.
+    { { Names = [Name $3]; Type = CFunc } }
+  | ID names
+    { { Names = $2; Type = TypeName $1 } }
+
+func:
+  | CALLBACK2 { }
+  | WINAPI    { }
+  | NTAPI     { }
+  | APIENTRY  { }
+  | CDECL     { }
+  | CRTDECL   { }
+  | STDCALL   { }
+
+/// Alias declaration rules.
+
+names:
+  |                   { [] }
+  | name              { [$1] }
+  | name COMMA names  { $1 :: $3 }
+
+name:
+  | constant nearFar nameBody { $3 }
+
+nameBody:
+  | ID              { Name $1 }
+  | ASTERISK ptr ID { PtrName $3 }
+
+/// Struct & Union declaration rules.
+
+structAttr:
+  | { }
+  | LBRACKET SATTR_IGNORE RBRACKET  { }
+
+declspec:
+  |           { }
+  | DECLSPEC  { }
+
+structAlias:
+  | LBRACE fields RBRACE names    { { Names = $4; Type = CStruct $2 } }
+  | ID LBRACE fields RBRACE names { { Names = Name $1 :: $5; Type = CStruct $3 } }
+  | ID names                      { { Names = $2; Type = TypeName $1 } }
+
+unionAlias:
+  | LBRACE fields RBRACE names    { { Names = $4; Type = CUnion $2 } }
+  | ID LBRACE fields RBRACE names { { Names = Name $1 :: $5; Type = CUnion $3 } }
+  | ID names                      { { Names = $2; Type = TypeName $1 } }
+
+fields:
+  | field         { [$1] }
+  | field fields  { $1 :: $2 }
+
+field:
+  | inoutAnnot fieldAnnot fieldAttr constant signedness fieldBody SEMICOLON
+    {
+      let fieldType, (name, arrSize), astrCount, isBitField = $6
+      { FieldType = fieldType
+        FieldName = name
+        MainSizeAnnot = $2 // Ignore inout annotation for struct.
+        AuxSizeAnnot = $3
+        AstrCount = astrCount
+        ArrSize = arrSize
+        IsBitField = isBitField }
+    }
+
+fieldAnnot:
+  |                                       { NoSizeAnnot }
+  | F_IGNORE                              { NoSizeAnnot }
+  | F_IGNORE_WITH_ARG LPAREN exprs RPAREN { NoSizeAnnot }
+  | F_BYTE_BUFFER LPAREN exprs RPAREN     { ByteBuffer (SinglePtr, head $3) }
+  | F_COUNT_BUFFER LPAREN exprs RPAREN    { CountBuffer (SinglePtr, head $3) }
+
+fieldAttr:
+  |                                 { NoSizeAnnot }
+  | LBRACKET fieldAttrList RBRACKET { $2 }
+
+fieldAttrList :
+  | FATTR_IGNORE
+    { NoSizeAnnot }
+  | FATTR_IGNORE_WITH_ARG LPAREN exprs RPAREN
+    { NoSizeAnnot }
+  | FATTR_COUNT_BUFFER LPAREN exprs RPAREN
+    { CountBuffer (SinglePtr, head $3) }
+  | FATTR_IGNORE COMMA fieldAttrList
+    { $3 }
+  | FATTR_IGNORE_WITH_ARG LPAREN exprs RPAREN COMMA fieldAttrList
+    { $6 }
+  | FATTR_COUNT_BUFFER LPAREN exprs RPAREN COMMA fieldAttrList
+    { CountBuffer (SinglePtr, head $3) }
+
+fieldBody:
+  // Normal field case.
+  | ID constant nearFar asterisks varsAndArrs bitField
+    { (TypeName $1, $5, $4, $6) }
+  | STRUC ID constant nearFar asterisks varsAndArrs bitField
+    { (TypeName $2, $6, $5, $7) }
+  | UNION ID constant nearFar asterisks varsAndArrs bitField
+    { (TypeName $2, $6, $5, $7) }
+  // Nested struct case.
+  | STRUC ID LBRACE fields RBRACE names
+    { (CStruct $4, ($2, None), 0, false) }
+  | STRUC LBRACE fields RBRACE names
+    { (CStruct $3, ("Anonymous", None), 0, false) }
+  // Nested union case.
+  | UNION ID LBRACE fields RBRACE names
+    { (CUnion $4, ($2, None), 0, false) }
+  | UNION LBRACE fields RBRACE names
+    { (CUnion $3, ("Anonymous", None), 0, false) }
+
+// Let's handle sequentially declared variables as an array.
+varsAndArrs:
+  |                             { "Anonymous", None }
+  | varOrArr                    { $1 }
+  | varOrArr COMMA varsAndArrs
+    { let name, size1 = $1 // Let's just choose the first-coming name.
+      let _, size2 = $3
+      // Now, promote singleton ('None' size) variable as an array whose is 1.
+      let size1 = match size1 with
+                  | None -> Const 1 | Some sz -> sz
+      let size2 = match size2 with
+                  | None -> Const 1 | Some sz -> sz
+      (name, Some (addSize size1 size2)) }
+
+varOrArr:
+  | ID arrSize  { ($1, $2) }
+
+arrSize:
+  |                                { None }
+  | LBRACKET ASTERISK RBRACKET     { Some DontKnow }
+  | LBRACKET expr RBRACKET arrSize
+    { match $4 with
+      | None -> Some $2
+      | Some size -> Some (multiplySize $2 size) }
+
+bitField:
+  |             { false }
+  | COLON expr  { true }
+
+/// Enum declaration rules.
+
+enumAlias:
+  | LBRACE enums RBRACE names     { { Names = $4; Type = CEnum } }
+  | ID LBRACE enums RBRACE names  { { Names = Name $1 :: $5; Type = CEnum } }
+  | ID names                      { { Names = $2; Type = TypeName $1 } }
+
+enum:
+  | ID              { }
+  | ID ASSIGN expr  { }
+
+enums:
+  | enum              { }
+  | enum COMMA        { }
+  | enum COMMA enums  { }
+
+%%

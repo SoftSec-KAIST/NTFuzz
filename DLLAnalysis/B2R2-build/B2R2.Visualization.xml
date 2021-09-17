@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>B2R2.Visualization</name></assembly>
+<members>
+<member name="P:B2R2.Visualization.VisPosition.Y">
+<summary>
+ Y position.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisPosition.X">
+<summary>
+ X position.
+</summary>
+</member>
+<member name="T:B2R2.Visualization.VisPosition">
+<summary>
+ X-Y position of nodes and edges for visualization.
+</summary>
+</member>
+<member name="F:B2R2.Visualization.VisBBlock.height">
+<summary>
+ This number (14), as in the width case, is empirically obtained with the
+ current font.
+</summary>
+</member>
+<member name="F:B2R2.Visualization.VisBBlock.width">
+<summary>
+ This number (7.5) is empirically obtained with the current font. For some
+ reasons, we cannot precisely determine the width of each text even though
+ we are using a fixed-width font. *)
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Width(System.Double)">
+<summary>
+ The width of the node.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Layer(System.Int32)">
+<summary>
+ The layer that this node belongs to.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Index(System.Int32)">
+<summary>
+ Relative index in a layer (from left to right).
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Width">
+<summary>
+ The width of the node.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Layer">
+<summary>
+ The layer that this node belongs to.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Index">
+<summary>
+ Relative index in a layer (from left to right).
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Height">
+<summary>
+ The height of the node.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.VisBBlock.Coordinate">
+<summary>
+ X-Y coordinate in the visualized graph.
+</summary>
+</member>
+<member name="T:B2R2.Visualization.VisBBlock">
+<summary>
+ The main vertex type used for visualization.
+</summary>
+</member>
+<member name="T:B2R2.Visualization.VisEdge">
+<summary>
+ The main edge data type for visualization.
+</summary>
+</member>
+<member name="T:B2R2.Visualization.VisGraph">
+<summary>
+ The main graph type for visualization.
+</summary>
+</member>
+<member name="T:B2R2.Visualization.JSONGraph">
+<summary>
+ This is Visualization module&apos;s final output type.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.CrossMinimization.maxCnt">
+<summary>
+ The maximum number of iterations.
+</summary>
+</member>
+<member name="M:B2R2.Visualization.CoordAssignment.assignXCoordinates(B2R2.BinGraph.ControlFlowGraph{B2R2.Visualization.VisBBlock,B2R2.Visualization.VisEdge},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock}[][])">
+<summary>
+ This algorithm is from Brandes et al., Fast and Simple Horizontal Coordinate
+ Assignment.
+</summary>
+</member>
+<member name="M:B2R2.Visualization.CoordAssignment.hCompact(B2R2.BinGraph.ControlFlowGraph{B2R2.Visualization.VisBBlock,B2R2.Visualization.VisEdge},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock}[][],System.Collections.Generic.Dictionary{B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock}},System.Collections.Generic.Dictionary{B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock}},B2R2.Visualization.CoordAssignment.HDirection)">
+<summary>
+ Alg 3 of Brandes et al.
+</summary>
+</member>
+<member name="M:B2R2.Visualization.CoordAssignment.vAlign(B2R2.BinGraph.ControlFlowGraph{B2R2.Visualization.VisBBlock,B2R2.Visualization.VisEdge},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock}[][],System.Int32,Microsoft.FSharp.Collections.FSharpSet{System.Tuple{B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock}}},B2R2.Visualization.CoordAssignment.VDirection,B2R2.Visualization.CoordAssignment.HDirection)">
+<summary>
+ Alg 2 of Brandes et al.
+</summary>
+</member>
+<member name="M:B2R2.Visualization.CoordAssignment.findTypeOneConflict``1(``0[][])">
+<summary>
+ Alg 1 of Brandes et al.
+</summary>
+</member>
+<member name="M:B2R2.Visualization.CoordAssignment.markTypeOneConflict(System.Int32,System.Int32,Microsoft.FSharp.Collections.FSharpSet{System.Tuple{B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock}}},B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock})">
+<summary>
+ Type1 conflict means inner segment and non-inner segment are crossing
+</summary>
+</member>
+<member name="M:B2R2.Visualization.CoordAssignment.findIncidentInnerSegmentNode(B2R2.BinGraph.Vertex{B2R2.Visualization.VisBBlock})">
+<summary>
+ Inner segment is an edge between two dummy nodes
+</summary>
+</member>
+<member name="P:B2R2.Visualization.CoordAssignment.blockIntervalY">
+<summary>
+ The vertical interval of two consecutive blocks.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.CoordAssignment.blockIntervalX">
+<summary>
+ The horizontal interval of two consecutive blocks.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.EdgeDrawing.backEdgeMargin">
+<summary>
+ The margin to prevent an overlap between a node and its back edges.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.EdgeDrawing.lastSegLen">
+<summary>
+ The length of the last segment of an edge. This value should be at least
+ less than the half of blockIntervalY.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.EdgeDrawing.edgeOffsetY">
+<summary>
+ The Y offset between starting points of two adjacent edges.
+</summary>
+</member>
+<member name="P:B2R2.Visualization.EdgeDrawing.edgeOffsetX">
+<summary>
+ The X offset between starting points of two adjacent edges.
+</summary>
+</member>
+</members>
+</doc>

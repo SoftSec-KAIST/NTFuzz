@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>B2R2.ConcEval</name></assembly>
+<members>
+<member name="T:B2R2.ConcEval.EvalValue">
+<summary>
+ A value is either defined or undefined.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.Memory.mem">
+<summary>
+ Store memory contents (byte-level).
+</summary>
+</member>
+<member name="T:B2R2.ConcEval.Labels">
+<summary>
+ Store labels of LowUIR statements.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalState.IgnoreUndef@">
+<summary>
+ Whether to ignore statements that cannot be evaluated due to undef values.
+ This is particularly useful to quickly check some constants.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalState.TerminateInstr@">
+<summary>
+ Indicate whether to terminate the current instruction or not. This flag is
+ set to true when we encounter an ISMark within a block. In other words, we
+ should proceed to the next instruction if this flag is set to true.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalState.Callbacks@">
+<summary>
+ Callback functions.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalState.Memory@">
+<summary>
+ Memory.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalState.Contexts@">
+<summary>
+ Per-thread context.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalState.PC@">
+<summary>
+ The current program counter.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalState.ThreadId@">
+<summary>
+ The current thread ID. We use thread IDs starting from zero. We assign new
+ thread IDs by incrementing it by one at a time. The first thread is 0, the
+ second is 1, and so on.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.ThreadId(System.Int32)">
+<summary>
+ The current thread ID. We use thread IDs starting from zero. We assign new
+ thread IDs by incrementing it by one at a time. The first thread is 0, the
+ second is 1, and so on.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.TerminateInstr(System.Boolean)">
+<summary>
+ Indicate whether to terminate the current instruction or not. This flag is
+ set to true when we encounter an ISMark within a block. In other words, we
+ should proceed to the next instruction if this flag is set to true.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.PC(System.UInt64)">
+<summary>
+ The current program counter.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.Contexts(B2R2.ConcEval.Context[])">
+<summary>
+ Per-thread context.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.ThreadId">
+<summary>
+ The current thread ID. We use thread IDs starting from zero. We assign new
+ thread IDs by incrementing it by one at a time. The first thread is 0, the
+ second is 1, and so on.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.TerminateInstr">
+<summary>
+ Indicate whether to terminate the current instruction or not. This flag is
+ set to true when we encounter an ISMark within a block. In other words, we
+ should proceed to the next instruction if this flag is set to true.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.PC">
+<summary>
+ The current program counter.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.Memory">
+<summary>
+ Memory.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.IgnoreUndef">
+<summary>
+ Whether to ignore statements that cannot be evaluated due to undef values.
+ This is particularly useful to quickly check some constants.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.Contexts">
+<summary>
+ Per-thread context.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalState.Callbacks">
+<summary>
+ Callback functions.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.StartInstr(B2R2.ConcEval.EvalState,System.UInt64)">
+<summary>
+ Start evaluating the instruction.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.SetTmp(B2R2.ConcEval.EvalState,System.Int32,B2R2.ConcEval.EvalValue)">
+<summary>
+ Set the value for the given temporary variable.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.SetReg(B2R2.ConcEval.EvalState,System.Int32,B2R2.ConcEval.EvalValue)">
+<summary>
+ Set the value for the given register.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.SetPC(B2R2.ConcEval.EvalState,System.UInt64)">
+<summary>
+ Set the program counter (PC).
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.SetMode(B2R2.ConcEval.EvalState,B2R2.ArchOperationMode)">
+<summary>
+ Set the architecture operation mode.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.PrepareContext(B2R2.ConcEval.EvalState,System.Int32,System.UInt64,Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.Int32,B2R2.ConcEval.EvalValue}})">
+<summary>
+ Prepare the initial context of the given thread id (tid). This function
+ will set the current thread to be tid.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.PrepareBlockEval(B2R2.BinIR.LowUIR.Stmt[],B2R2.ConcEval.EvalState)">
+<summary>
+ Get ready for block-level evaluation (evalBlock).
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.NextStmt(B2R2.ConcEval.EvalState)">
+<summary>
+ Update the current statement index to be the next (current + 1) statement.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.IsInstrTerminated(B2R2.ConcEval.EvalState)">
+<summary>
+ Should we stop evaluating further statements of the current instruction,
+ and move on to the next instruction?
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.GoToLabel(B2R2.ConcEval.EvalState,System.Tuple{System.String,System.Int32})">
+<summary>
+ Go to the statement of the given label.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.GetTmp(B2R2.ConcEval.EvalState,System.Int32)">
+<summary>
+ Get the value of the given temporary variable.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.GetReg(B2R2.ConcEval.EvalState,System.Int32)">
+<summary>
+ Get the value of the given register.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.GetMode(B2R2.ConcEval.EvalState)">
+<summary>
+ Get the current architecture operation mode.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.GetCurrentContext(B2R2.ConcEval.EvalState)">
+<summary>
+ Get the current context of the current thread.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.GetContext(B2R2.ConcEval.EvalState,System.Int32)">
+<summary>
+ Get the context of a specific thread.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.ContextSwitch(System.Int32,B2R2.ConcEval.EvalState)">
+<summary>
+ Thread context switch. If the given thread ID does not exist, we create a
+ new context for it.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.CleanUp(B2R2.ConcEval.EvalState)">
+<summary>
+ Delete temporary states variables and get ready for evaluating the next
+ block of isntructions.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.EvalState.AbortInstr(B2R2.ConcEval.EvalState)">
+<summary>
+ Stop evaluating further statements of the current instruction, and move on
+ the next instruction.
+</summary>
+</member>
+<member name="T:B2R2.ConcEval.EvalState">
+<summary>
+ The main evaluation state that will be updated by evaluating every statement
+ encountered during the course of execution.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalCallBacks.StmtEvalEventHandler@">
+<summary>
+ Statement evaluation event handler.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalCallBacks.SideEffectEventHandler@">
+<summary>
+ Side-effect event handler.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalCallBacks.PutEventHandler@">
+<summary>
+ Put event handler. The first parameter is PC, and the second is the value
+ that is put to the destination.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalCallBacks.StoreEventHandler@">
+<summary>
+ Memory store event handler.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.EvalCallBacks.LoadEventHandler@">
+<summary>
+ Memory load event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.StoreEventHandler(Microsoft.FSharp.Core.FSharpFunc{System.UInt64,Microsoft.FSharp.Core.FSharpFunc{System.UInt64,Microsoft.FSharp.Core.FSharpFunc{B2R2.BitVector,Microsoft.FSharp.Core.Unit}}})">
+<summary>
+ Memory store event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.StmtEvalEventHandler(Microsoft.FSharp.Core.FSharpFunc{B2R2.BinIR.LowUIR.Stmt,Microsoft.FSharp.Core.Unit})">
+<summary>
+ Statement evaluation event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.SideEffectEventHandler(Microsoft.FSharp.Core.FSharpFunc{B2R2.BinIR.SideEffect,Microsoft.FSharp.Core.FSharpFunc{B2R2.ConcEval.EvalState,B2R2.ConcEval.EvalState}})">
+<summary>
+ Side-effect event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.PutEventHandler(Microsoft.FSharp.Core.FSharpFunc{System.UInt64,Microsoft.FSharp.Core.FSharpFunc{B2R2.ConcEval.EvalValue,Microsoft.FSharp.Core.Unit}})">
+<summary>
+ Put event handler. The first parameter is PC, and the second is the value
+ that is put to the destination.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.LoadEventHandler(Microsoft.FSharp.Core.FSharpFunc{System.UInt64,Microsoft.FSharp.Core.FSharpFunc{System.UInt64,Microsoft.FSharp.Core.FSharpFunc{B2R2.BitVector,Microsoft.FSharp.Core.Unit}}})">
+<summary>
+ Memory load event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.StoreEventHandler">
+<summary>
+ Memory store event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.StmtEvalEventHandler">
+<summary>
+ Statement evaluation event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.SideEffectEventHandler">
+<summary>
+ Side-effect event handler.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.PutEventHandler">
+<summary>
+ Put event handler. The first parameter is PC, and the second is the value
+ that is put to the destination.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.EvalCallBacks.LoadEventHandler">
+<summary>
+ Memory load event handler.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.Context.Mode@">
+<summary>
+ Architecture mode.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.Context.Labels@">
+<summary>
+ Store labels and their corresponding statement indices.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.Context.Temporaries@">
+<summary>
+ Store temporary variable values.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.Context.Registers@">
+<summary>
+ Store named register values.
+</summary>
+</member>
+<member name="F:B2R2.ConcEval.Context.StmtIdx@">
+<summary>
+ The current index of the statement to evaluate within the scope of a
+ machine instruction. This index behaves like a PC for statements of an
+ instruction.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.Context.StmtIdx(System.Int32)">
+<summary>
+ The current index of the statement to evaluate within the scope of a
+ machine instruction. This index behaves like a PC for statements of an
+ instruction.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.Context.Mode(B2R2.ArchOperationMode)">
+<summary>
+ Architecture mode.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.Context.Temporaries">
+<summary>
+ Store temporary variable values.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.Context.StmtIdx">
+<summary>
+ The current index of the statement to evaluate within the scope of a
+ machine instruction. This index behaves like a PC for statements of an
+ instruction.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.Context.Registers">
+<summary>
+ Store named register values.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.Context.Mode">
+<summary>
+ Architecture mode.
+</summary>
+</member>
+<member name="P:B2R2.ConcEval.Context.Labels">
+<summary>
+ Store labels and their corresponding statement indices.
+</summary>
+</member>
+<member name="T:B2R2.ConcEval.InvalidMemException">
+<summary>
+ Raised when an invalid memory access.
+</summary>
+</member>
+<member name="T:B2R2.ConcEval.UndefExpException">
+<summary>
+ Raised when undefined expression is encountered.
+</summary>
+</member>
+<member name="M:B2R2.ConcEval.Evaluator.evalBlock(B2R2.ConcEval.EvalState,System.Int32,B2R2.BinIR.LowUIR.Stmt[])">
+<summary>
+ Evaluate a block of statements. The block may represent a machine
+ instruction, or a basic block.
+</summary>
+</member>
+<member name="T:B2R2.ConcEval.Evaluator">
+<summary>
+ ConcEval is a concrete evaluation module for LowUIR.
+</summary>
+</member>
+</members>
+</doc>

@@ -1,0 +1,132 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Core\Const.fs" />
+    <Compile Include="Core\Utils.fs" />
+    <Compile Include="Core\IntTypes.fs" />
+    <Compile Include="Core\Extension.fs" />
+    <Compile Include="Core\BinTypes.fs" />
+    <Compile Include="Core\Optimize.fs" />
+    <Compile Include="Core\Symbol.fs" />
+    <Compile Include="Core\PESymbol.fs" />
+    <Compile Include="Core\APISchema.fs" />
+    <Compile Include="Core\RedirectMap.fs" />
+    <Compile Include="Core\Subroutine.fs" />
+    <Compile Include="Core\Stub.fs" />
+    <Compile Include="Core\WinAPI.fs" />
+    <Compile Include="FrontEnd\BasicBlock.fs" />
+    <Compile Include="FrontEnd\CFG.fs" />
+    <Compile Include="FrontEnd\ImportMap.fs" />
+    <Compile Include="FrontEnd\BinInfo.fs" />
+    <Compile Include="FrontEnd\Parse.fs" />
+    <Compile Include="FrontEnd\CallGraphAnalysis.fs" />
+    <Compile Include="FrontEnd\CallGraph.fs" />
+    <Compile Include="FrontEnd\SCC.fs" />
+    <Compile Include="FrontEnd\StubAnalysis.fs" />
+    <Compile Include="Domain\Signature.fs" />
+    <Compile Include="Domain\Functor.fs" />
+    <Compile Include="Domain\Register.fs" />
+    <Compile Include="Domain\PPoint.fs" />
+    <Compile Include="Domain\FlatInt.fs" />
+    <Compile Include="Domain\AbsInt.fs" />
+    <Compile Include="Domain\AbsLoc.fs" />
+    <Compile Include="DataFlow\FootPrint.fs" />
+    <Compile Include="DataFlow\BackwardState.fs" />
+    <Compile Include="DataFlow\ForwardState.fs" />
+    <Compile Include="DataFlow\DataFlow.fs" />
+    <Compile Include="DataFlow\DFA.fs" />
+    <Compile Include="Domain\Function.fs" />
+    <Compile Include="Domain\TypeConstr.fs" />
+    <Compile Include="Domain\AbsVal.fs" />
+    <Compile Include="Domain\RegMap.fs" />
+    <Compile Include="Domain\Record.fs" />
+    <Compile Include="Domain\LocSymMap.fs" />
+    <Compile Include="Domain\AbsMem.fs" />
+    <Compile Include="Domain\Relation.fs" />
+    <Compile Include="Domain\Pruning.fs" />
+    <Compile Include="Domain\State.fs" />
+    <Compile Include="Domain\Wrapper.fs" />
+    <Compile Include="Debug\Debug.fs" />
+    <Compile Include="Analysis\Typedef.fs" />
+    <Compile Include="Summary\Helper.fs" />
+    <Compile Include="Summary\Substitution.fs" />
+    <Compile Include="Summary\Constraints.fs" />
+    <Compile Include="Summary\SideEffect.fs" />
+    <Compile Include="Summary\ArgSize.fs" />
+    <Compile Include="Summary\SysArg.fs" />
+    <Compile Include="Summary\Syscall.fs" />
+    <Compile Include="Summary\Summary.fs" />
+    <Compile Include="Semantics\MemFunc.fs" />
+    <Compile Include="Semantics\Encoding.fs" />
+    <Compile Include="Semantics\Evaluate.fs" />
+    <Compile Include="Semantics\Assign.fs" />
+    <Compile Include="Semantics\Call.fs" />
+    <Compile Include="Semantics\CondJump.fs" />
+    <Compile Include="Semantics\Execute.fs" />
+    <Compile Include="Analysis\AbstractInterpretation.fs" />
+    <Compile Include="Analysis\Modular.fs" />
+    <Compile Include="TypeInference\Statistics.fs" />
+    <Compile Include="TypeInference\Primitives.fs" />
+    <Compile Include="TypeInference\TypeMap.fs" />
+    <Compile Include="TypeInference\Summarize.fs" />
+    <Compile Include="TypeInference\TypeSpec.fs" />
+    <Compile Include="TypeInference\SelectMajority.fs" />
+    <Compile Include="TypeInference\DecideType.fs" />
+    <Compile Include="TypeInference\Distort.fs" />
+    <Compile Include="TypeInference\TypeInference.fs" />
+    <Compile Include="CodeGenerate\Convention.fs" />
+    <Compile Include="CodeGenerate\Typedefs.fs" />
+    <Compile Include="CodeGenerate\HookerFunc.fs" />
+    <Compile Include="CodeGenerate\RegisterFunc.fs" />
+    <Compile Include="CodeGenerate\HookerCode.fs" />
+    <Compile Include="CodeGenerate\ConstDef.fs" />
+    <Compile Include="CodeGenerate\CodeGenerate.fs" />
+    <Compile Include="Main\Main.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="B2R2.Core">
+      <HintPath>..\B2R2-build\B2R2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.BinFile">
+      <HintPath>..\B2R2-build\B2R2.BinFile.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.BinIR">
+      <HintPath>..\B2R2-build\B2R2.BinIR.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.FrontEnd.Core">
+      <HintPath>..\B2R2-build\B2R2.FrontEnd.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.FrontEnd.Library">
+      <HintPath>..\B2R2-build\B2R2.FrontEnd.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.FrontEnd.Intel">
+      <HintPath>..\B2R2-build\B2R2.FrontEnd.Intel.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.BinCorpus">
+      <HintPath>..\B2R2-build\B2R2.BinCorpus.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.BinGraph">
+      <HintPath>..\B2R2-build\B2R2.BinGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="B2R2.MiddleEnd">
+      <HintPath>..\B2R2-build\B2R2.MiddleEnd.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WinHeader\src\WinHeader.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Argu" Version="5.5.0" />
+    <PackageReference Include="FParsec" Version="1.0.3" />
+  </ItemGroup>
+
+
+</Project>

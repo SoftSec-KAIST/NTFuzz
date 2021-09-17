@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>B2R2.FrontEnd.TMS320C6000</name></assembly>
+<members>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.EffectiveAddress">
+<summary>
+ Effective address (after applying delay slots)
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.IsParallel">
+<summary>
+ Parallel bit. If this is true, this instruction will get executed in
+ parallel with the previous instruction. Note that this is not exactly the
+ same as the P bit used in the processor.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.OperationSize">
+<summary>
+ Operation Size.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.FunctionalUnit">
+<summary>
+ Functional Units.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.Operands">
+<summary>
+ Operands.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.Opcode">
+<summary>
+ Opcode.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.NumBytes">
+<summary>
+ Instruction length.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.InsInfo.Address">
+<summary>
+ Address.
+</summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.InsInfo">
+<summary>
+ Basic information obtained by parsing a TMS320C6000 instruction.
+</summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.Opcode">
+ <summary>
+   TMS320C6000 opcodes. This type should be generated using
+   <c>scripts/genOpcode.fsx</c> from the `TMS320C6000SupportedOpcode.txt`
+   file.
+ </summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.R">
+<summary>
+ Shortcut for Register type.
+</summary>
+</member>
+<member name="F:B2R2.FrontEnd.TMS320C6000.TMS320C6000Instruction.Info@">
+<summary>
+ Basic instruction information.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.TMS320C6000Instruction.Info">
+<summary>
+ Basic instruction information.
+</summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.TMS320C6000Instruction">
+<summary>
+ The internal representation for a TMS320C6000 instruction used by our
+ disassembler and lifter.
+</summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.TMS320C6000Parser">
+<summary>
+ Parser for TMS320C6000 instructions. Parser will return a platform-agnostic
+ instruction type (Instruction).
+</summary>
+</member>
+<member name="F:B2R2.FrontEnd.TMS320C6000.TMS320C6000TranslationContext.RegExprs@">
+<summary>
+ Register expressions.
+</summary>
+</member>
+<member name="P:B2R2.FrontEnd.TMS320C6000.TMS320C6000TranslationContext.RegExprs">
+<summary>
+ Register expressions.
+</summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.TMS320C6000TranslationContext">
+<summary>
+ Translation context for TMS320C6000 instructions.
+</summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.RegisterModule">
+<summary>
+ This module exposes several useful functions to handle TMS320C6000
+ registers.
+</summary>
+</member>
+<member name="M:B2R2.FrontEnd.TMS320C6000.Parser.parse(B2R2.BinReader,B2R2.FrontEnd.ParsingContext,System.UInt64,System.Int32)">
+<summary>
+ Read in bytes and return a parsed instruction for TMS320C6000. This function
+ returns TMS320C6000Instruction, which is a specialized type for TMS320C6000.
+ If you want to handle instructions in a platform-agnostic manner, you&apos;d
+ better use the TMS320C6000 class.
+</summary>
+</member>
+<member name="T:B2R2.FrontEnd.TMS320C6000.Parser">
+<summary>
+ TMS320C6000 instruction parser.
+</summary>
+</member>
+</members>
+</doc>

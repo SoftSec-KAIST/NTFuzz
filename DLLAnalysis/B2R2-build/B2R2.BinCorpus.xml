@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>B2R2.BinCorpus</name></assembly>
+<members>
+<member name="T:B2R2.BinCorpus.LeaderInfo">
+<summary>
+ Leader information at a ProrgramPoint. Each leader holds information about
+ the corresponding basic block, such as ArchOperationMode and its address
+ offset. The offset is a virtual offset that can be used to readjust the
+ address of the basic block when necessary (it is mostly set to 0 though).
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.InstrMap">
+<summary>
+ Address to an InstructionInfo mapping.
+</summary>
+</member>
+<member name="P:B2R2.BinCorpus.InstructionInfo.Offset">
+<summary>
+ Instruction itself contains its address, but we may want to place this
+ instruction in a different location in a virtual address space. This field
+ is useful in such cases to give a specific offset to the instruction. This
+ field is zero in most cases (except EVM) though.
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.InstructionInfo">
+<summary>
+ Abstract information about the instruction and its corresponding IR
+ statements.
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.CalleeMap">
+<summary>
+ A mapping from callee&apos;s name to its information.
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.CallerMap">
+<summary>
+ A mapping from a caller address to its callees.
+</summary>
+</member>
+<member name="P:B2R2.BinCorpus.Callee.IsNoReturn">
+<summary>
+ Is this callee a no-return function such as &quot;exit&quot;?
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.Callee">
+<summary>
+ Callee is a function invoked within the binary under analysis. Callee can be
+ an external function, i.e., it does not need to be defined within the
+ binary. We let a target address be a callee&apos;s address if one of the
+ following two conditions hold: (1) the address is a target of a call
+ instruction, and (2) the address is maked as a function in the symbol table,
+ and the function is referenced by a branch instruction (either call or jmp).
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.CalleeKind">
+<summary>
+ Callee can be either external or internal.
+</summary>
+</member>
+<member name="P:B2R2.BinCorpus.Apparatus.Modified">
+<summary>
+ This is a flag representing whether this Apparatus has been modified
+ by our post analysis.
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.Apparatus">
+ <summary>
+   Binary apparatus (Apparatus) contains the key components and information
+   about our CFG analysis, such as all the parsed instructions from the
+   target binary as well as the positions of all the leaders found. This will
+   be updated through our CFG analyses.
+ </summary>
+ <remarks>
+   <para>B2R2's CFG analyses roughly work as follows.</para>
+   <para>
+     In the very first stage, we recursively parse (and lift) binary
+     instructions starting from the given entry point. In this stage, we
+     simply follow concrete edges. Therefore we may miss indirect branches in
+     this stage, but we will handle them later. After parsing the entire
+     binary, we obtain a mapping (InstrMap) from an address to an InsInfo.
+   </para>
+   <para>
+     Next, we recursively traverse every instruction found again as we did in
+     the first stage, but in this stage, we will analyze lifted LowUIR
+     statements to figure out any internal branches (intra-instruction
+     branches). This step is important to gather all possible program points
+     (ProgramPoint), which are a jump target, i.e., a leader. The leader
+     information is stored in the LeaderInfos field.
+   </para>
+   <para>
+     While we compute the leader positions, we mark every call target
+     encountered to build both CallerMap and CalleeMap. Normally, being a
+     call target (i.e., callee) implies being a function entry. However, this
+     is not always the case. We should not always consider a callee as a
+     function. Nevertheless, our lens-based framework can provide a valid CFG
+     at any callee, which can greatly help further analyses.
+   </para>
+   <para>
+     Once Apparatus is constructed, our SCFG module will then build a graph
+     based on the information found in the Apparatus. The details should be
+     found in the SCFG module.
+   </para>
+   <para>
+     Now that we have obtained basic information (Apparatus and SCFG) to work
+     with, we perform some post analyses to improve the information. For
+     example, we remove unnecessary edges from the SCFG by disconnecting
+     return edges from a function that termiates the process (e.g., exit
+     function), and we recover indirect branch targets to discover more
+     instructions. After the post analyses, we may or may not have an updated
+     Apparatus, in which case we rerun the above steps to update our SCFG
+     (with newly found instructions, etc.). We terminate our analysis when
+     our post analayses do not bring a different Apparatus.
+   </para>
+ </remarks>
+</member>
+<member name="T:B2R2.BinCorpus.JmpTargetMap">
+<summary>
+ A mapping from an instruction address to computed jump targets. This table
+ stores only &quot;computed&quot; jump targets.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.InstrMapModule.build(B2R2.FrontEnd.BinHandler,System.Collections.Generic.IEnumerable{B2R2.BinCorpus.LeaderInfo})">
+<summary>
+ Build a mapping from Addr to Instruction. This function recursively parses
+ the binary, but does not lift it yet. Since GetNextInstrAddrs returns next
+ concrete target addresses, this function does *not* reveal all reachable
+ instructions. Such uncovered instructions should be handled in the next
+ phase.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.InstrMapModule.update``1(B2R2.FrontEnd.BinHandler,``0,System.Collections.Generic.IEnumerable{B2R2.BinCorpus.LeaderInfo})">
+<summary>
+ Update the map (InstrMap) from the given entries.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.InstrMapModule.trimIEMark(B2R2.BinIR.LowUIR.Stmt[])">
+<summary>
+ Remove unnecessary IEMark to ease the analysis.
+</summary>
+</member>
+<member name="P:B2R2.BinCorpus.ApparatusModule.StmtAccumulator.FunctionAddrs">
+<summary>
+ Collect all the address that are being a target of a direct call
+ instruction (not indirect calls, since we don&apos;t know the target at this
+ point).
+</summary>
+</member>
+<member name="P:B2R2.BinCorpus.ApparatusModule.StmtAccumulator.Leaders">
+<summary>
+ This is a set of leaders, each of which is a tuple of a ProgramPoint and
+ an address offset. The offset is used to readjust the address of the
+ instruction when parsing it (it is mostly 0 though).
+</summary>
+</member>
+<member name="T:B2R2.BinCorpus.ApparatusModule.StmtAccumulator">
+<summary>
+ A temporary accumulator for folding all the IR statements.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.ApparatusModule.getInternalFunctions(B2R2.BinCorpus.Apparatus)">
+<summary>
+ Return the list of callees that have a concrete mapping to the binary.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.ApparatusModule.getFunctionAddrs(B2R2.BinCorpus.Apparatus)">
+<summary>
+ Return the list of function addresses from the Apparatus.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.ApparatusModule.update(B2R2.FrontEnd.BinHandler,B2R2.BinCorpus.Apparatus,System.Collections.Generic.IEnumerable{B2R2.BinCorpus.LeaderInfo})">
+<summary>
+ Update instruction info for the given binary apparatus based on the given
+ target addresses. Those addresses should represent a function entry point.
+ Regular branch destinations should not be handled here.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.ApparatusModule.Init(B2R2.FrontEnd.BinHandler)">
+<summary>
+ Create a binary apparatus from the given BinHandler.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.ApparatusModule.foldStmts``1(B2R2.FrontEnd.BinHandler,B2R2.BinCorpus.ApparatusModule.StmtAccumulator,System.Collections.Generic.KeyValuePair{``0,B2R2.BinCorpus.InstructionInfo})">
+<summary>
+ Fold all the statements to get the leaders, function positions, etc.
+</summary>
+</member>
+<member name="M:B2R2.BinCorpus.ApparatusModule.getInitialEntryPoints(B2R2.FrontEnd.BinHandler)">
+<summary>
+ This function returns an initial sequence of entry points obtained from
+ the binary itself (e.g., from its symbol information). Therefore, if the
+ binary is stripped, the returned sequence will be incomplete, and we need
+ to expand it during the other analyses.
+</summary>
+</member>
+</members>
+</doc>
