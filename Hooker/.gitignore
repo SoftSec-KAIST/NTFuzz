@@ -1,0 +1,7 @@
+.vs
+Debug/
+Release/
+*.vcxproj.user
+*.swp
+*.swo
+Utils/*.pyc
