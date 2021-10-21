@@ -1,6 +1,6 @@
 [submodule "DLLAnalysis/binaries"]
 	path = DLLAnalysis/binaries
-	url = git@github.com:jchoi2022/NtFuzz-binaries.git
+	url = https://github.com/jchoi2022/NtFuzz-binaries.git
 [submodule "DLLAnalysis/WinHeader/HeaderData"]
 	path = DLLAnalysis/WinHeader/HeaderData
-	url = git@github.com:jchoi2022/NtFuzz-HeaderData.git
+	url = https://github.com/jchoi2022/NtFuzz-HeaderData.git
