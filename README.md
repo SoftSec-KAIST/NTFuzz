@@ -37,10 +37,22 @@ We used Windows Subsystem for Linux (WSL) to run the static analyzer, but you
 can run the analyzer on a pure Linux, too. Other platforms are also supported if
 you slightly modify the commands and scripts below.
 
-1. Install .NET Core 5.0.
+1. Install .NET 5.0 SDK and .NET 3.1 Runtime.
 
 Installation process depends on the Linux distributions and versions, so please
 refer to this [link](https://docs.microsoft.com/en-us/dotnet/core/install/).
+For instance, if you are using Ubuntu 18.04, you would have run the following
+commands.
+
+```
+$ wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+$ sudo dpkg -i packages-microsoft-prod.deb
+$ rm packages-microsoft-prod.deb
+$ sudo apt-get update
+$ sudo apt-get install -y apt-transport-https
+$ sudo apt-get update
+$ sudo apt-get install -y dotnet-sdk-5.0 dotnet-runtime-3.1
+```
 
 2. Build the static analyzer.
 
